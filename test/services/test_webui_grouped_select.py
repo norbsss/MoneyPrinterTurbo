@@ -1,17 +1,37 @@
+import ast
 from contextlib import contextmanager
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-import streamlit as st
 from streamlit.testing.v1 import AppTest
 
 from app.config import config
 from app.services import voice
+from test.services.webui_source import webui_source
 
 
 ROOT_DIR = Path(__file__).parent.parent.parent
 WEBUI_MAIN = ROOT_DIR / "webui" / "Main.py"
+
+
+def _grouped_select_declaration():
+    """读取 _GROUPED_SELECT_COMPONENT 声明时传入的 html/css/js。
+
+    组件在 webui.components.widgets 导入时声明一次，之后的页面运行不会再调用
+    st.components.v2.component，因此从源码读取声明内容。
+    """
+    tree = ast.parse(webui_source())
+    call = next(
+        node.value
+        for node in tree.body
+        if isinstance(node, ast.Assign)
+        and any(
+            isinstance(target, ast.Name) and target.id == "_GROUPED_SELECT_COMPONENT"
+            for target in node.targets
+        )
+    )
+    return {keyword.arg: ast.literal_eval(keyword.value) for keyword in call.keywords}
 
 
 class _GroupedSelectHarness:
@@ -20,22 +40,11 @@ class _GroupedSelectHarness:
     def __init__(self):
         self.selected = None
         self.calls = []
-        self.declaration = None
-        self._original_component = st.components.v2.component
+        self.declaration = _grouped_select_declaration()
 
-    def declare(self, name, *args, **kwargs):
-        # 新手引导等第三方组件同样使用 Components v2。透传这些声明可以避免
-        # 测试桩改变页面其它功能，只控制本用例关心的视频来源选择结果。
-        if name != "mpt_grouped_select":
-            return self._original_component(name, *args, **kwargs)
-
-        self.declaration = kwargs
-
-        def render(**render_kwargs):
-            self.calls.append(render_kwargs)
-            return SimpleNamespace(selected=self.selected)
-
-        return render
+    def render(self, **render_kwargs):
+        self.calls.append(render_kwargs)
+        return SimpleNamespace(selected=self.selected)
 
 
 @contextmanager
@@ -45,8 +54,8 @@ def _running_app(harness, *, saved_video_source="pexels"):
     test_ui_config = dict(config.ui, language="en")
     with (
         patch(
-            "streamlit.components.v2.component",
-            side_effect=harness.declare,
+            "webui.components.widgets._GROUPED_SELECT_COMPONENT",
+            side_effect=harness.render,
         ),
         patch.object(config, "app", test_app_config),
         patch.object(config, "ui", test_ui_config),

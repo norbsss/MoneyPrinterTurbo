@@ -173,8 +173,9 @@ from app.models import const
 tr = json.loads(Path({str(ROOT / "webui/i18n/es.json")!r}).read_text(encoding='utf-8'))['Translation'].__getitem__
 _normalize_task_state = lambda value: value
 _render_generation_logs = lambda task_id: None
+from test.services.webui_source import webui_source
 entry = Path({str(ROOT / "webui/Main.py")!r})
-nodes = [node for node in ast.parse(entry.read_text(encoding='utf-8')).body
+nodes = [node for node in ast.parse(webui_source()).body
          if isinstance(node, ast.FunctionDef) and node.name == '_render_generation_task_snapshot']
 exec(compile(ast.fix_missing_locations(ast.Module(body=nodes, type_ignores=[])), str(entry), 'exec'))
 _render_generation_task_snapshot('image-task', {{

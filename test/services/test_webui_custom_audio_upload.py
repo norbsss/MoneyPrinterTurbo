@@ -12,6 +12,7 @@ from loguru import logger
 from app.models.schema import VideoParams
 from app.services import bgm as bgm_service
 from app.utils import utils
+from test.services.webui_source import webui_source
 
 
 WEBUI_MAIN = Path(__file__).parents[2] / "webui" / "Main.py"
@@ -50,7 +51,7 @@ def _wav_bytes() -> bytes:
 
 def _run_webui_audio_block(uploaded_audio_file, task_dir, stage_dir):
     """Execute the real generation handler's custom-audio upload branch."""
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     generation = next(
         node for node in tree.body
         if isinstance(node, ast.FunctionDef)

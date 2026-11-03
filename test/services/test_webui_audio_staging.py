@@ -5,6 +5,7 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
+from test.services.webui_source import webui_source
 
 
 class _StopGeneration(Exception):
@@ -28,7 +29,7 @@ class _PartialWrite:
 
 class TestWebuiAudioStaging(unittest.TestCase):
     def execute_audio_branch(self, kind, directory):
-        tree = ast.parse((Path(__file__).parents[2] / "webui/Main.py").read_text(encoding="utf-8"))
+        tree = ast.parse(webui_source())
         function = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "_render_generation_controls")
         branch = next(n for n in ast.walk(function) if isinstance(n, ast.If) and isinstance(n.test, ast.Name)
                       and n.test.id == kind)
@@ -67,7 +68,7 @@ class TestWebuiAudioStaging(unittest.TestCase):
             self.execute_audio_branch("reusable_voice_preview", directory)
 
     def load_stage_helper(self):
-        tree = ast.parse((Path(__file__).parents[2] / "webui/Main.py").read_text(encoding="utf-8"))
+        tree = ast.parse(webui_source())
         helper = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "_stage_task_audio")
         namespace = {"os": os, "tempfile": tempfile, "logger": Mock()}
         exec(compile(ast.fix_missing_locations(ast.Module(body=[helper], type_ignores=[])), "audio-helper", "exec"), namespace)

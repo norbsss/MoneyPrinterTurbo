@@ -4,6 +4,7 @@ import os
 import re
 from collections.abc import Mapping
 from pathlib import Path
+from test.services.webui_source import webui_source
 
 
 ROOT_DIR = Path(__file__).parent.parent.parent
@@ -22,7 +23,7 @@ def _load_download_name_helpers():
     直接导入 Main.py 会执行整套页面渲染。这里只编译目标常量和函数，执行的仍是
     合并后的真实实现，因此断言覆盖的是生产行为而不是测试里的副本。
     """
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     selected_nodes = []
     for node in tree.body:
         if isinstance(node, ast.Assign) and any(

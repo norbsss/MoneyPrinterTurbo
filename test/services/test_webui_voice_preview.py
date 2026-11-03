@@ -15,6 +15,7 @@ from app.services import task as tm
 from app.services import voice
 from app.services import webui_task
 from app.utils import utils
+from test.services.webui_source import webui_source
 
 
 ROOT_DIR = Path(__file__).parent.parent.parent
@@ -23,7 +24,7 @@ WEBUI_MAIN = ROOT_DIR / "webui" / "Main.py"
 
 def _load_duration_estimator():
     """只加载纯估算函数，避免单元测试导入并执行完整 Streamlit 页面。"""
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     function = next(
         node
         for node in tree.body
@@ -38,7 +39,7 @@ def _load_duration_estimator():
 
 def _load_provider_signature(test_config, session_state=None):
     """加载凭证摘要和 Provider 指纹函数，独立验证缓存失效规则。"""
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     functions = [
         node
         for node in tree.body
@@ -74,7 +75,7 @@ def _load_provider_signature(test_config, session_state=None):
 
 def _load_voxcpm_state_helpers(session_state):
     """Load upload-state helpers without executing the full Streamlit app."""
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     function_names = {
         "_get_voxcpm_reference_audio",
         "_get_voxcpm_reference_audio_digest",

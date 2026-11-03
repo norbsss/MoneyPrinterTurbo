@@ -9,6 +9,7 @@ from streamlit.testing.v1 import AppTest
 
 from app.config import config
 from app.services import llm, loomloom
+from test.services.webui_source import webui_source
 
 
 ROOT_DIR = Path(__file__).parent.parent.parent
@@ -43,7 +44,7 @@ def _widget_by_key(elements, key):
 
 
 def test_loomloom_execution_requires_confirmation_and_quoted_version():
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     function = _function(tree, "_render_loomloom_script_generation")
     execute_calls = [
         node
@@ -70,7 +71,7 @@ def test_loomloom_execution_requires_confirmation_and_quoted_version():
 
 
 def test_loomloom_path_does_not_fall_back_to_local_llm_calls():
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     loomloom_function = _function(tree, "_render_loomloom_script_generation")
     local_function = _function(tree, "_render_local_script_generation")
 
@@ -89,7 +90,7 @@ def test_loomloom_path_does_not_fall_back_to_local_llm_calls():
 
 
 def test_loomloom_quote_signature_changes_with_billable_inputs():
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     signature_function = _function(tree, "_loomloom_script_signature")
     module = ast.fix_missing_locations(
         ast.Module(body=[signature_function], type_ignores=[])
@@ -138,7 +139,7 @@ def test_loomloom_quote_signature_changes_with_billable_inputs():
 
 def test_loomloom_model_reference_prices_match_known_models_and_ignore_new_ones():
     """价格仅是本地展示增强，未知后端模型不能因此变成不可选。"""
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     price_table = next(
         node
         for node in tree.body
