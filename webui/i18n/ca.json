@@ -550,6 +550,12 @@
     "local_ai.models.image": "Models d'imatge",
     "local_ai.models.video": "Models de vídeo",
     "upload_post.ai_label": "Marca les publicacions de TikTok i Instagram com a generades amb IA",
-    "upload_post.ai_label.help": "Les plataformes exigeixen etiquetar el contingut realista generat amb IA; els vídeos de YouTube sempre s'etiqueten. A Instagram l'etiqueta no es pot treure després de publicar."
+    "upload_post.ai_label.help": "Les plataformes exigeixen etiquetar el contingut realista generat amb IA; els vídeos de YouTube sempre s'etiqueten. A Instagram l'etiqueta no es pot treure després de publicar.",
+    "upload_post.schedule": "Quan publicar",
+    "upload_post.schedule.now": "Tan bon punt el vídeo estigui llest",
+    "upload_post.schedule.queue": "Següent franja lliure de la meva cua d'Upload-Post",
+    "upload_post.schedule.delay": "Després d'un nombre d'hores",
+    "upload_post.schedule.delay_hours": "Hores d'espera",
+    "upload_post.schedule.help": "Upload-Post desa les publicacions programades i les publica ell mateix, així que aquest ordinador pot estar apagat. Configura les franges de la cua al tauler d'Upload-Post."
   }
 }

@@ -683,6 +683,12 @@ upload_post_youtube_made_for_kids = false
 # Label TikTok and Instagram posts as AI-generated (Upload-Post is_ai_generated),
 # as YouTube uploads already are. Instagram's label cannot be removed later.
 upload_post_ai_label = true
+# When to publish: "now" (right after the video is ready), "queue" (the next
+# free slot in your Upload-Post queue, set up in the Upload-Post dashboard) or
+# "delay" (upload_post_schedule_delay_hours after the video is ready).
+# Upload-Post stores scheduled posts and publishes them itself.
+upload_post_schedule = "now"
+upload_post_schedule_delay_hours = 2
 # Maximum number of running and queued cross-post jobs per process. When the
 # limit is reached, video generation still succeeds and only cross-posting is
 # rejected.

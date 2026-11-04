@@ -550,6 +550,12 @@
     "local_ai.models.image": "Modelos de imagem",
     "local_ai.models.video": "Modelos de vídeo",
     "upload_post.ai_label": "Marcar publicações do TikTok e do Instagram como geradas por IA",
-    "upload_post.ai_label.help": "As plataformas exigem rótulo em conteúdo realista gerado por IA; os envios ao YouTube são sempre rotulados. No Instagram o rótulo não pode ser removido depois de publicar."
+    "upload_post.ai_label.help": "As plataformas exigem rótulo em conteúdo realista gerado por IA; os envios ao YouTube são sempre rotulados. No Instagram o rótulo não pode ser removido depois de publicar.",
+    "upload_post.schedule": "Quando publicar",
+    "upload_post.schedule.now": "Assim que o vídeo ficar pronto",
+    "upload_post.schedule.queue": "Próximo horário livre na minha fila do Upload-Post",
+    "upload_post.schedule.delay": "Depois de um número de horas",
+    "upload_post.schedule.delay_hours": "Horas de espera",
+    "upload_post.schedule.help": "O Upload-Post guarda as publicações agendadas e as publica sozinho, então este computador pode estar desligado. Configure os horários da fila no painel do Upload-Post."
   }
 }

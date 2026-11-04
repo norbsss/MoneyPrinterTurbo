@@ -805,6 +805,12 @@
     "local_ai.models.image": "Image models",
     "local_ai.models.video": "Video models",
     "upload_post.ai_label": "Label TikTok and Instagram posts as AI-generated",
-    "upload_post.ai_label.help": "The platforms require a label on realistic AI-generated content; YouTube uploads are always labeled. Instagram's label cannot be removed after publishing."
+    "upload_post.ai_label.help": "The platforms require a label on realistic AI-generated content; YouTube uploads are always labeled. Instagram's label cannot be removed after publishing.",
+    "upload_post.schedule": "When to publish",
+    "upload_post.schedule.now": "Right after the video is ready",
+    "upload_post.schedule.queue": "Next free slot in my Upload-Post queue",
+    "upload_post.schedule.delay": "A set number of hours later",
+    "upload_post.schedule.delay_hours": "Hours to wait",
+    "upload_post.schedule.help": "Upload-Post stores scheduled posts and publishes them itself, so this computer can be off by then. Set up queue slots in the Upload-Post dashboard."
   }
 }

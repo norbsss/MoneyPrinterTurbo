@@ -550,6 +550,12 @@
     "local_ai.models.image": "Modèles d'image",
     "local_ai.models.video": "Modèles vidéo",
     "upload_post.ai_label": "Indiquer que les publications TikTok et Instagram sont générées par IA",
-    "upload_post.ai_label.help": "Les plateformes exigent une mention pour les contenus réalistes générés par IA ; les vidéos YouTube sont toujours signalées. Sur Instagram, la mention ne peut plus être retirée après publication."
+    "upload_post.ai_label.help": "Les plateformes exigent une mention pour les contenus réalistes générés par IA ; les vidéos YouTube sont toujours signalées. Sur Instagram, la mention ne peut plus être retirée après publication.",
+    "upload_post.schedule": "Quand publier",
+    "upload_post.schedule.now": "Dès que la vidéo est prête",
+    "upload_post.schedule.queue": "Prochain créneau libre de ma file Upload-Post",
+    "upload_post.schedule.delay": "Après un nombre d'heures donné",
+    "upload_post.schedule.delay_hours": "Heures d'attente",
+    "upload_post.schedule.help": "Upload-Post enregistre les publications programmées et les publie lui-même : cet ordinateur peut être éteint à ce moment-là. Configurez les créneaux de la file dans le tableau de bord Upload-Post."
   }
 }

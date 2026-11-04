@@ -1309,6 +1309,7 @@ def _run_cross_post(
     youtube_privacy_status: str,
     youtube_made_for_kids: bool = False,
     upload_account: dict | None = None,
+    schedule: dict | None = None,
 ) -> None:
     """后台执行跨平台发布，并只补充发布相关的任务字段。"""
     results = []
@@ -1411,6 +1412,8 @@ def _run_cross_post(
                 upload_kwargs["account"] = upload_account
             if platform_titles:
                 upload_kwargs["platform_titles"] = platform_titles
+            if schedule:
+                upload_kwargs["schedule"] = schedule
             result = upload_post.cross_post_video(
                 video_path=video_path,
                 title=post_title,
@@ -1559,6 +1562,8 @@ def _schedule_cross_post(
             youtube_privacy_status,
             youtube_made_for_kids,
             upload_post.upload_post_service.snapshot_account(),
+            # 延迟发布从排队时刻起算，并固定当时的发布方式。
+            upload_post.upload_post_service.schedule_request(),
         )
         _register_cross_post_future(task_id, future)
         future.add_done_callback(partial(_finalize_cross_post_future, task_id))

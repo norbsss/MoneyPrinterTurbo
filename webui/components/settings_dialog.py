@@ -1425,6 +1425,44 @@ def _render_settings_dialog():
                     ):
                         _set_runtime_config("app", "upload_post_ai_label", upload_post_ai_label)
 
+                # 定时发布由 Upload-Post 保存并按时执行，到时本机无需开机。
+                schedule_options = ["now", "queue", "delay"]
+                saved_schedule = app_settings.get("upload_post_schedule", "now")
+                if saved_schedule not in schedule_options:
+                    saved_schedule = "now"
+                upload_post_schedule = stable_selectbox(
+                    tr("upload_post.schedule"),
+                    schedule_options,
+                    saved_schedule,
+                    "upload_post_schedule_select",
+                    # 标签在本次渲染时算好：format_func 也会在页面运行之外被调用。
+                    format_func={
+                        value: tr(f"upload_post.schedule.{value}") for value in schedule_options
+                    }.get,
+                    help=tr("upload_post.schedule.help"),
+                )
+                if upload_post_schedule != saved_schedule:
+                    _set_runtime_config("app", "upload_post_schedule", upload_post_schedule)
+                if upload_post_schedule == "delay":
+                    try:
+                        saved_delay = float(
+                            app_settings.get("upload_post_schedule_delay_hours", 2.0)
+                        )
+                    except (TypeError, ValueError):
+                        saved_delay = 2.0
+                    upload_post_delay = st.number_input(
+                        tr("upload_post.schedule.delay_hours"),
+                        min_value=0.5,
+                        max_value=24.0 * 365,
+                        value=min(max(saved_delay, 0.5), 24.0 * 365),
+                        step=0.5,
+                        key="upload_post_schedule_delay_hours_input",
+                    )
+                    if upload_post_delay != saved_delay:
+                        _set_runtime_config(
+                            "app", "upload_post_schedule_delay_hours", float(upload_post_delay)
+                        )
+
                 if "youtube" in upload_post_platforms:
                     yt_status_options = ["public", "private", "unlisted"]
                     yt_saved = app_settings.get(

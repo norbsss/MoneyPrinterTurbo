@@ -805,6 +805,12 @@
     "local_ai.models.image": "生图模型",
     "local_ai.models.video": "视频模型",
     "upload_post.ai_label": "将 TikTok 与 Instagram 帖子标注为 AI 生成",
-    "upload_post.ai_label.help": "平台要求对逼真的 AI 生成内容进行标注；YouTube 上传始终带有标注。Instagram 的标注发布后无法移除。"
+    "upload_post.ai_label.help": "平台要求对逼真的 AI 生成内容进行标注；YouTube 上传始终带有标注。Instagram 的标注发布后无法移除。",
+    "upload_post.schedule": "发布时间",
+    "upload_post.schedule.now": "视频生成后立即发布",
+    "upload_post.schedule.queue": "Upload-Post 发布队列中的下一个空闲时段",
+    "upload_post.schedule.delay": "指定小时数之后",
+    "upload_post.schedule.delay_hours": "等待小时数",
+    "upload_post.schedule.help": "Upload-Post 会保存定时发布并按时执行，到时本机可以关机。发布队列时段请在 Upload-Post 后台设置。"
   }
 }

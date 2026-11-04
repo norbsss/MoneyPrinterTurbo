@@ -550,6 +550,12 @@
     "local_ai.models.image": "Modelos de imagen",
     "local_ai.models.video": "Modelos de vídeo",
     "upload_post.ai_label": "Marcar las publicaciones de TikTok e Instagram como generadas con IA",
-    "upload_post.ai_label.help": "Las plataformas exigen etiquetar el contenido realista generado con IA; los vídeos de YouTube siempre se etiquetan. En Instagram la etiqueta no se puede quitar después de publicar."
+    "upload_post.ai_label.help": "Las plataformas exigen etiquetar el contenido realista generado con IA; los vídeos de YouTube siempre se etiquetan. En Instagram la etiqueta no se puede quitar después de publicar.",
+    "upload_post.schedule": "Cuándo publicar",
+    "upload_post.schedule.now": "En cuanto el vídeo esté listo",
+    "upload_post.schedule.queue": "Siguiente hueco libre de mi cola de Upload-Post",
+    "upload_post.schedule.delay": "Tras un número de horas",
+    "upload_post.schedule.delay_hours": "Horas de espera",
+    "upload_post.schedule.help": "Upload-Post guarda las publicaciones programadas y las publica él mismo, así que este ordenador puede estar apagado. Configura los huecos de la cola en el panel de Upload-Post."
   }
 }

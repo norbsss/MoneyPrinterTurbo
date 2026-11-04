@@ -550,6 +550,12 @@
     "local_ai.models.image": "Модели изображений",
     "local_ai.models.video": "Видеомодели",
     "upload_post.ai_label": "Отмечать публикации в TikTok и Instagram как созданные ИИ",
-    "upload_post.ai_label.help": "Платформы требуют отмечать реалистичный контент, созданный ИИ; видео на YouTube отмечаются всегда. В Instagram отметку нельзя снять после публикации."
+    "upload_post.ai_label.help": "Платформы требуют отмечать реалистичный контент, созданный ИИ; видео на YouTube отмечаются всегда. В Instagram отметку нельзя снять после публикации.",
+    "upload_post.schedule": "Когда публиковать",
+    "upload_post.schedule.now": "Сразу после готовности видео",
+    "upload_post.schedule.queue": "Ближайший свободный слот в моей очереди Upload-Post",
+    "upload_post.schedule.delay": "Через заданное число часов",
+    "upload_post.schedule.delay_hours": "Часов ожидания",
+    "upload_post.schedule.help": "Upload-Post сохраняет отложенные публикации и публикует их сам, поэтому компьютер к этому времени можно выключить. Слоты очереди настраиваются в панели Upload-Post."
   }
 }

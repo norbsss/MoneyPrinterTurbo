@@ -550,6 +550,12 @@
     "local_ai.models.image": "Modelli di immagini",
     "local_ai.models.video": "Modelli video",
     "upload_post.ai_label": "Contrassegna i post di TikTok e Instagram come generati con l'IA",
-    "upload_post.ai_label.help": "Le piattaforme richiedono un'etichetta per i contenuti realistici generati con l'IA; i video su YouTube sono sempre etichettati. Su Instagram l'etichetta non si può rimuovere dopo la pubblicazione."
+    "upload_post.ai_label.help": "Le piattaforme richiedono un'etichetta per i contenuti realistici generati con l'IA; i video su YouTube sono sempre etichettati. Su Instagram l'etichetta non si può rimuovere dopo la pubblicazione.",
+    "upload_post.schedule": "Quando pubblicare",
+    "upload_post.schedule.now": "Appena il video è pronto",
+    "upload_post.schedule.queue": "Prossimo spazio libero nella mia coda Upload-Post",
+    "upload_post.schedule.delay": "Dopo un numero di ore stabilito",
+    "upload_post.schedule.delay_hours": "Ore di attesa",
+    "upload_post.schedule.help": "Upload-Post salva i post programmati e li pubblica da sé, quindi questo computer può essere spento. Imposta gli spazi della coda nella dashboard di Upload-Post."
   }
 }

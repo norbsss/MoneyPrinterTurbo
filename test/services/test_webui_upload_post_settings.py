@@ -129,3 +129,38 @@ def test_youtube_audience_hidden_for_other_platforms():
         assert not app.exception
         assert not any(item.key == "upload_post_youtube_made_for_kids_selectbox" for item in app.selectbox)
         assert values["upload_post_youtube_made_for_kids"] is True
+
+
+def test_publish_timing_and_ai_label_settings_persist():
+    test_app_config = dict(
+        config.app,
+        upload_post_enabled=True,
+        upload_post_platforms=["tiktok", "instagram"],
+        upload_post_schedule="now",
+        upload_post_ai_label=True,
+    )
+    with (
+        patch.object(config, "app", test_app_config),
+        patch.object(config, "try_save_config", return_value=True),
+    ):
+        app = AppTest.from_file(str(WEBUI_MAIN), default_timeout=60)
+        app.run()
+        app.session_state["settings_dialog_open"] = True
+        app.session_state["settings_dialog_target_tab"] = "publish"
+        app.run()
+        assert not app.exception
+
+        schedule = _widget_by_key(app.selectbox, "upload_post_schedule_select")
+        assert schedule.value == "now"
+        assert not any(
+            str(getattr(item, "key", "")) == "upload_post_schedule_delay_hours_input"
+            for item in app.number_input
+        )
+        schedule.set_value("delay").run()
+        assert config.app["upload_post_schedule"] == "delay"
+        _widget_by_key(app.number_input, "upload_post_schedule_delay_hours_input").set_value(6.0).run()
+        assert config.app["upload_post_schedule_delay_hours"] == 6.0
+
+        _widget_by_key(app.checkbox, "upload_post_ai_label_checkbox").uncheck().run()
+        assert config.app["upload_post_ai_label"] is False
+        assert not app.exception

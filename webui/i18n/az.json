@@ -550,6 +550,12 @@
     "local_ai.models.image": "Şəkil modelləri",
     "local_ai.models.video": "Video modelləri",
     "upload_post.ai_label": "TikTok və Instagram paylaşımlarını Sİ ilə yaradılmış kimi işarələ",
-    "upload_post.ai_label.help": "Platformalar real görünən Sİ məzmununun işarələnməsini tələb edir; YouTube yükləmələri həmişə işarələnir. Instagram-da işarə dərc edildikdən sonra silinə bilməz."
+    "upload_post.ai_label.help": "Platformalar real görünən Sİ məzmununun işarələnməsini tələb edir; YouTube yükləmələri həmişə işarələnir. Instagram-da işarə dərc edildikdən sonra silinə bilməz.",
+    "upload_post.schedule": "Nə vaxt dərc edilsin",
+    "upload_post.schedule.now": "Video hazır olan kimi",
+    "upload_post.schedule.queue": "Upload-Post növbəmdə növbəti boş vaxt",
+    "upload_post.schedule.delay": "Müəyyən saat sonra",
+    "upload_post.schedule.delay_hours": "Gözləmə saatı",
+    "upload_post.schedule.help": "Upload-Post planlaşdırılmış paylaşımları saxlayır və özü dərc edir, ona görə bu kompüter o vaxt sönülü ola bilər. Növbə vaxtlarını Upload-Post panelində qurun."
   }
 }

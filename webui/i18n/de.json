@@ -550,6 +550,12 @@
     "local_ai.models.image": "Bildmodelle",
     "local_ai.models.video": "Videomodelle",
     "upload_post.ai_label": "TikTok- und Instagram-Beiträge als KI-generiert kennzeichnen",
-    "upload_post.ai_label.help": "Die Plattformen verlangen eine Kennzeichnung realistischer KI-Inhalte; YouTube-Uploads werden immer gekennzeichnet. Bei Instagram lässt sich die Kennzeichnung nach dem Veröffentlichen nicht entfernen."
+    "upload_post.ai_label.help": "Die Plattformen verlangen eine Kennzeichnung realistischer KI-Inhalte; YouTube-Uploads werden immer gekennzeichnet. Bei Instagram lässt sich die Kennzeichnung nach dem Veröffentlichen nicht entfernen.",
+    "upload_post.schedule": "Veröffentlichungszeitpunkt",
+    "upload_post.schedule.now": "Sobald das Video fertig ist",
+    "upload_post.schedule.queue": "Nächster freier Platz in meiner Upload-Post-Warteschlange",
+    "upload_post.schedule.delay": "Nach einer festen Anzahl Stunden",
+    "upload_post.schedule.delay_hours": "Wartezeit in Stunden",
+    "upload_post.schedule.help": "Upload-Post speichert geplante Beiträge und veröffentlicht sie selbst, dieser Computer kann dann ausgeschaltet sein. Warteschlangen-Zeiten richten Sie im Upload-Post-Dashboard ein."
   }
 }

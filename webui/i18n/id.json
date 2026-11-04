@@ -550,6 +550,12 @@
     "local_ai.models.image": "Model gambar",
     "local_ai.models.video": "Model video",
     "upload_post.ai_label": "Tandai postingan TikTok dan Instagram sebagai buatan AI",
-    "upload_post.ai_label.help": "Platform mewajibkan label untuk konten AI yang tampak nyata; unggahan YouTube selalu diberi label. Label Instagram tidak bisa dihapus setelah dipublikasikan."
+    "upload_post.ai_label.help": "Platform mewajibkan label untuk konten AI yang tampak nyata; unggahan YouTube selalu diberi label. Label Instagram tidak bisa dihapus setelah dipublikasikan.",
+    "upload_post.schedule": "Kapan dipublikasikan",
+    "upload_post.schedule.now": "Segera setelah video siap",
+    "upload_post.schedule.queue": "Slot kosong berikutnya di antrean Upload-Post saya",
+    "upload_post.schedule.delay": "Setelah sejumlah jam",
+    "upload_post.schedule.delay_hours": "Jam menunggu",
+    "upload_post.schedule.help": "Upload-Post menyimpan postingan terjadwal dan memublikasikannya sendiri, jadi komputer ini boleh mati saat itu. Atur slot antrean di dasbor Upload-Post."
   }
 }

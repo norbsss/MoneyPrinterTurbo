@@ -550,6 +550,12 @@
     "local_ai.models.image": "Mô hình ảnh",
     "local_ai.models.video": "Mô hình video",
     "upload_post.ai_label": "Gắn nhãn bài đăng TikTok và Instagram là do AI tạo",
-    "upload_post.ai_label.help": "Các nền tảng yêu cầu gắn nhãn nội dung AI trông như thật; video YouTube luôn được gắn nhãn. Nhãn trên Instagram không thể gỡ sau khi đăng."
+    "upload_post.ai_label.help": "Các nền tảng yêu cầu gắn nhãn nội dung AI trông như thật; video YouTube luôn được gắn nhãn. Nhãn trên Instagram không thể gỡ sau khi đăng.",
+    "upload_post.schedule": "Khi nào đăng",
+    "upload_post.schedule.now": "Ngay khi video xong",
+    "upload_post.schedule.queue": "Khung giờ trống tiếp theo trong hàng đợi Upload-Post của tôi",
+    "upload_post.schedule.delay": "Sau một số giờ nhất định",
+    "upload_post.schedule.delay_hours": "Số giờ chờ",
+    "upload_post.schedule.help": "Upload-Post lưu bài đăng hẹn giờ và tự đăng, nên lúc đó máy tính này có thể tắt. Thiết lập khung giờ hàng đợi trong bảng điều khiển Upload-Post."
   }
 }
