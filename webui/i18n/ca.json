@@ -556,6 +556,17 @@
     "upload_post.schedule.queue": "Següent franja lliure de la meva cua d'Upload-Post",
     "upload_post.schedule.delay": "Després d'un nombre d'hores",
     "upload_post.schedule.delay_hours": "Hores d'espera",
-    "upload_post.schedule.help": "Upload-Post desa les publicacions programades i les publica ell mateix, així que aquest ordinador pot estar apagat. Configura les franges de la cua al tauler d'Upload-Post."
+    "upload_post.schedule.help": "Upload-Post desa les publicacions programades i les publica ell mateix, així que aquest ordinador pot estar apagat. Configura les franges de la cua al tauler d'Upload-Post.",
+    "library.open": "Biblioteca",
+    "library.title": "Biblioteca de vídeos",
+    "library.empty": "Encara no hi ha vídeos acabats. Els vídeos que generis apareixeran aquí.",
+    "library.play": "Reprodueix",
+    "library.publish.none": "Sense publicar",
+    "library.publish.pending": "S'està publicant…",
+    "library.publish.done": "Publicat",
+    "library.publish.scheduled": "Programat per a {date}",
+    "library.publish.queued": "Afegit a la cua d'Upload-Post",
+    "library.publish.failed": "No s'ha pogut publicar",
+    "library.show_more": "Mostra'n més"
   }
 }

@@ -556,6 +556,17 @@
     "upload_post.schedule.queue": "Prochain créneau libre de ma file Upload-Post",
     "upload_post.schedule.delay": "Après un nombre d'heures donné",
     "upload_post.schedule.delay_hours": "Heures d'attente",
-    "upload_post.schedule.help": "Upload-Post enregistre les publications programmées et les publie lui-même : cet ordinateur peut être éteint à ce moment-là. Configurez les créneaux de la file dans le tableau de bord Upload-Post."
+    "upload_post.schedule.help": "Upload-Post enregistre les publications programmées et les publie lui-même : cet ordinateur peut être éteint à ce moment-là. Configurez les créneaux de la file dans le tableau de bord Upload-Post.",
+    "library.open": "Bibliothèque",
+    "library.title": "Bibliothèque vidéo",
+    "library.empty": "Aucune vidéo terminée pour l'instant. Les vidéos générées apparaissent ici.",
+    "library.play": "Lire",
+    "library.publish.none": "Non publiée",
+    "library.publish.pending": "Publication…",
+    "library.publish.done": "Publiée",
+    "library.publish.scheduled": "Programmée pour {date}",
+    "library.publish.queued": "Ajoutée à la file Upload-Post",
+    "library.publish.failed": "Échec de la publication",
+    "library.show_more": "Afficher plus"
   }
 }

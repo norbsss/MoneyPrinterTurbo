@@ -138,7 +138,7 @@ Upload-Post turned out to cover more than assumed: per-platform text fields (`ti
 **Decision (2026-11-03): A — restructure Streamlit.** B is not planned; keep it possible by building new features API-first.
 1. Split `Main.py` into `webui/common.py` and `webui/components/` (one module per panel). Pure move, no behavior change, existing UI tests guard it. **Done 2026-11-03** (uncommitted). Page-level modules come with step A.2 via `st.navigation`; avoid a `webui/pages/` folder, which Streamlit turns into automatic multipage navigation.
 2. Create page becomes a stepper: Script → Voice → Visuals → Subtitles & Music → Render → Publish, with a sticky summary/preview column.
-3. Library page: grid of rendered videos with thumbnail, state, re-run, publish status.
+3. Library page: grid of rendered videos with thumbnail, state, re-run, publish status. **Done 2026-11-04 as a dialog** (top bar > Library): switching pages would skip rendering the generation form, and Streamlit drops the state of widgets it does not render, so a half-typed subject or script would be lost. Thumbnails are the frame at 0.5 s, cached next to the video.
 4. Visual pass on `styles.css`: one token set, dark/light, consistent spacing.
 5. In parallel, every new feature (local AI, publish) gets API endpoints first, UI second → B becomes a front-end-only project later.
 

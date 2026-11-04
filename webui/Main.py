@@ -44,6 +44,7 @@ from webui.common import (
 )
 from webui.components.audio_panel import _render_audio_settings
 from webui.components.generation_controls import _render_generation_controls
+from webui.components.library import render_library_dialog
 from webui.components.script_panel import _render_script_settings
 from webui.components.settings_dialog import _render_settings_dialog
 from webui.components.settings_transfer import _apply_pending_settings_preset
@@ -65,8 +66,11 @@ def _render_application():
     """按固定顺序渲染顶部栏、弹窗、生成表单和任务结果。"""
     _render_top_bar()
 
+    # Streamlit 同一时间只能打开一个弹窗，设置优先。
     if st.session_state.get("settings_dialog_open", False):
         _render_settings_dialog()
+    elif st.session_state.get("library_dialog_open", False):
+        render_library_dialog()
 
     if _apply_pending_settings_preset():
         st.success(tr("Settings Preset Imported"))

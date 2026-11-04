@@ -811,6 +811,17 @@
     "upload_post.schedule.queue": "Upload-Post 发布队列中的下一个空闲时段",
     "upload_post.schedule.delay": "指定小时数之后",
     "upload_post.schedule.delay_hours": "等待小时数",
-    "upload_post.schedule.help": "Upload-Post 会保存定时发布并按时执行，到时本机可以关机。发布队列时段请在 Upload-Post 后台设置。"
+    "upload_post.schedule.help": "Upload-Post 会保存定时发布并按时执行，到时本机可以关机。发布队列时段请在 Upload-Post 后台设置。",
+    "library.open": "视频库",
+    "library.title": "视频库",
+    "library.empty": "还没有生成完成的视频。生成的视频会显示在这里。",
+    "library.play": "播放",
+    "library.publish.none": "未发布",
+    "library.publish.pending": "正在发布…",
+    "library.publish.done": "已发布",
+    "library.publish.scheduled": "定时发布：{date}",
+    "library.publish.queued": "已加入 Upload-Post 发布队列",
+    "library.publish.failed": "发布失败",
+    "library.show_more": "显示更多"
   }
 }

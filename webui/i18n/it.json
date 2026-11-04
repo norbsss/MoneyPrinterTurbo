@@ -556,6 +556,17 @@
     "upload_post.schedule.queue": "Prossimo spazio libero nella mia coda Upload-Post",
     "upload_post.schedule.delay": "Dopo un numero di ore stabilito",
     "upload_post.schedule.delay_hours": "Ore di attesa",
-    "upload_post.schedule.help": "Upload-Post salva i post programmati e li pubblica da sé, quindi questo computer può essere spento. Imposta gli spazi della coda nella dashboard di Upload-Post."
+    "upload_post.schedule.help": "Upload-Post salva i post programmati e li pubblica da sé, quindi questo computer può essere spento. Imposta gli spazi della coda nella dashboard di Upload-Post.",
+    "library.open": "Libreria",
+    "library.title": "Libreria video",
+    "library.empty": "Nessun video completato. I video generati compaiono qui.",
+    "library.play": "Riproduci",
+    "library.publish.none": "Non pubblicato",
+    "library.publish.pending": "Pubblicazione…",
+    "library.publish.done": "Pubblicato",
+    "library.publish.scheduled": "Programmato per {date}",
+    "library.publish.queued": "Aggiunto alla coda di Upload-Post",
+    "library.publish.failed": "Pubblicazione non riuscita",
+    "library.show_more": "Mostra altri"
   }
 }

@@ -556,6 +556,17 @@
     "upload_post.schedule.queue": "Slot kosong berikutnya di antrean Upload-Post saya",
     "upload_post.schedule.delay": "Setelah sejumlah jam",
     "upload_post.schedule.delay_hours": "Jam menunggu",
-    "upload_post.schedule.help": "Upload-Post menyimpan postingan terjadwal dan memublikasikannya sendiri, jadi komputer ini boleh mati saat itu. Atur slot antrean di dasbor Upload-Post."
+    "upload_post.schedule.help": "Upload-Post menyimpan postingan terjadwal dan memublikasikannya sendiri, jadi komputer ini boleh mati saat itu. Atur slot antrean di dasbor Upload-Post.",
+    "library.open": "Pustaka",
+    "library.title": "Pustaka video",
+    "library.empty": "Belum ada video yang selesai. Video yang Anda buat muncul di sini.",
+    "library.play": "Putar",
+    "library.publish.none": "Belum dipublikasikan",
+    "library.publish.pending": "Memublikasikan…",
+    "library.publish.done": "Dipublikasikan",
+    "library.publish.scheduled": "Dijadwalkan pada {date}",
+    "library.publish.queued": "Ditambahkan ke antrean Upload-Post",
+    "library.publish.failed": "Gagal memublikasikan",
+    "library.show_more": "Tampilkan lagi"
   }
 }

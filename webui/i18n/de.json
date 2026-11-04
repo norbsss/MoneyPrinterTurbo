@@ -556,6 +556,17 @@
     "upload_post.schedule.queue": "Nächster freier Platz in meiner Upload-Post-Warteschlange",
     "upload_post.schedule.delay": "Nach einer festen Anzahl Stunden",
     "upload_post.schedule.delay_hours": "Wartezeit in Stunden",
-    "upload_post.schedule.help": "Upload-Post speichert geplante Beiträge und veröffentlicht sie selbst, dieser Computer kann dann ausgeschaltet sein. Warteschlangen-Zeiten richten Sie im Upload-Post-Dashboard ein."
+    "upload_post.schedule.help": "Upload-Post speichert geplante Beiträge und veröffentlicht sie selbst, dieser Computer kann dann ausgeschaltet sein. Warteschlangen-Zeiten richten Sie im Upload-Post-Dashboard ein.",
+    "library.open": "Bibliothek",
+    "library.title": "Videobibliothek",
+    "library.empty": "Noch keine fertigen Videos. Erzeugte Videos erscheinen hier.",
+    "library.play": "Abspielen",
+    "library.publish.none": "Nicht veröffentlicht",
+    "library.publish.pending": "Wird veröffentlicht…",
+    "library.publish.done": "Veröffentlicht",
+    "library.publish.scheduled": "Geplant für {date}",
+    "library.publish.queued": "In der Upload-Post-Warteschlange",
+    "library.publish.failed": "Veröffentlichung fehlgeschlagen",
+    "library.show_more": "Mehr anzeigen"
   }
 }

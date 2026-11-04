@@ -556,6 +556,17 @@
     "upload_post.schedule.queue": "Siguiente hueco libre de mi cola de Upload-Post",
     "upload_post.schedule.delay": "Tras un número de horas",
     "upload_post.schedule.delay_hours": "Horas de espera",
-    "upload_post.schedule.help": "Upload-Post guarda las publicaciones programadas y las publica él mismo, así que este ordenador puede estar apagado. Configura los huecos de la cola en el panel de Upload-Post."
+    "upload_post.schedule.help": "Upload-Post guarda las publicaciones programadas y las publica él mismo, así que este ordenador puede estar apagado. Configura los huecos de la cola en el panel de Upload-Post.",
+    "library.open": "Biblioteca",
+    "library.title": "Biblioteca de vídeos",
+    "library.empty": "Aún no hay vídeos terminados. Los vídeos que generes aparecerán aquí.",
+    "library.play": "Reproducir",
+    "library.publish.none": "Sin publicar",
+    "library.publish.pending": "Publicando…",
+    "library.publish.done": "Publicado",
+    "library.publish.scheduled": "Programado para {date}",
+    "library.publish.queued": "Añadido a la cola de Upload-Post",
+    "library.publish.failed": "Error al publicar",
+    "library.show_more": "Mostrar más"
   }
 }
