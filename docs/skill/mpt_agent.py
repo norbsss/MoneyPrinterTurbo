@@ -42,6 +42,8 @@ SUPPORTED_SOURCES = {
     # the CLI accepts must not be rejected here as unsupported.
     "openai_image",
     "codex_image",
+    "local_image",
+    "local_video",
     "local",
 }
 VOLCENGINE_ARK_API_KEY_URL = (

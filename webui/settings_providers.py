@@ -12,6 +12,7 @@ from app.models.llm_provider import LLM_PROVIDER_REGISTRY
 from app.services import (
     infistar_video,
     jalapeno_video,
+    local_ai,
     loomloom,
     material,
     metaso_minimax,
@@ -102,6 +103,8 @@ def configured_material_providers(settings, groups, codex_connected=False):
             "jalapeno": jalapeno_video.is_enabled(settings),
             "muapi": muapi.is_enabled(settings),
             "openai_image": material.is_openai_image_enabled(settings),
+            "local_image": local_ai.readiness()[0],
+            "local_video": local_ai.readiness("video")[0],
             "codex_image": bool(
                 codex_connected and _text(settings.get("codex_image_model_name"))
             ),

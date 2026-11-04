@@ -234,6 +234,28 @@ openai_image_size = ""
 # Example: "cinematic photo of {term}, photorealistic, high detail"
 openai_image_prompt_template = ""
 
+# Local AI material sources ("local_image" and "local_video"): one image per scene on this
+# computer's GPU, free and offline. Set it up in the WebUI under
+# Settings > AI Image > Local AI, which detects the hardware, installs a
+# separate PyTorch runtime and downloads the recommended model.
+# Catalog model id; empty uses the model recommended for this hardware.
+local_ai_image_model = ""
+# Video model for the "local_video" source, which animates each scene's image
+# into a short clip (minutes per clip). Empty uses the recommended model.
+local_ai_video_model = ""
+# Where models are downloaded (several GB each). Empty: storage/local_ai/models.
+local_ai_models_dir = ""
+# Where the PyTorch runtime is installed. Empty: storage/local_ai/runtime.
+local_ai_runtime_dir = ""
+# GPU index from nvidia-smi; empty picks the GPU with the most memory.
+local_ai_gpu_index = ""
+# Address of the local image server. Change the port if 7862 is taken.
+local_ai_url = "http://127.0.0.1:7862"
+# Start the image server automatically when a video needs images.
+local_ai_autostart = true
+# Only for gated models such as FLUX.1 schnell (or set HF_TOKEN).
+local_ai_hf_api_token = ""
+
 # Optional TwelveLabs integration for semantic material ranking and video QA.
 # Install the optional dependency with: uv sync --extra twelvelabs
 # Create an API key at https://playground.twelvelabs.io/
@@ -658,6 +680,15 @@ upload_post_youtube_privacy_status = "public"
 # 未配置时，后续 YouTube 上传默认声明为非面向儿童；儿童内容请显式设置为 true。
 # 与旧版省略声明字段不同，此设置不会修改已上传的视频。
 upload_post_youtube_made_for_kids = false
+# Label TikTok and Instagram posts as AI-generated (Upload-Post is_ai_generated),
+# as YouTube uploads already are. Instagram's label cannot be removed later.
+upload_post_ai_label = true
+# When to publish: "now" (right after the video is ready), "queue" (the next
+# free slot in your Upload-Post queue, set up in the Upload-Post dashboard) or
+# "delay" (upload_post_schedule_delay_hours after the video is ready).
+# Upload-Post stores scheduled posts and publishes them itself.
+upload_post_schedule = "now"
+upload_post_schedule_delay_hours = 2
 # Maximum number of running and queued cross-post jobs per process. When the
 # limit is reached, video generation still succeeds and only cross-posting is
 # rejected.

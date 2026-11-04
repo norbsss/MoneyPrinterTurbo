@@ -28,6 +28,7 @@ from app.services import (
     generation_progress,
     infistar_video,
     jalapeno_video,
+    local_ai,
     material_cache,
     material_upload,
     metaso_minimax,
@@ -82,6 +83,10 @@ class CodexImageMaterialError(OpenAIImagePaidResultError):
             "codex.image.render_failed": "Could not render the generated Codex image. Generation stopped without retrying.",
         }
         super().__init__(messages.get(self.key, str(error)))
+
+
+class LocalImageMaterialError(OpenAIImagePaidResultError):
+    """本机生图失败：通常是服务无法启动或模型缺失，后续关键词同样会失败，因此终止任务。"""
 
 
 def _safe_public_url(value: Any) -> str | None:
@@ -1906,6 +1911,132 @@ def generate_images_codex(
     return [item]
 
 
+def generate_images_local(
+    search_term: str,
+    minimum_duration: int,
+    video_aspect: VideoAspect = VideoAspect.portrait,
+    save_dir: str = "",
+) -> List[MaterialInfo]:
+    """用本机 GPU 服务为一个脚本关键词生成一张图片，素材结构与 OpenAI 兼容生图一致。"""
+    aspect = VideoAspect(video_aspect)
+    if minimum_duration <= 0:
+        return []
+    generation_progress.submitting("local_image")
+    try:
+        # 服务端会追加画风与负面提示词，这里只传关键词本身。
+        image_bytes = local_ai.generate_image(
+            search_term,
+            OPENAI_IMAGE_DEFAULT_SIZES.get(aspect, "1024x1024"),
+        )
+        image_path, width, height = _save_openai_image_file(image_bytes, save_dir)
+    except local_ai.LocalAIError as error:
+        raise LocalImageMaterialError(str(error)) from None
+    except _OpenAIImageDecodeError:
+        raise LocalImageMaterialError("the local AI server returned an invalid image") from None
+    item = MaterialInfo()
+    item.provider = "local_image"
+    item.url = image_path
+    item.duration = max(int(minimum_duration), 1)
+    item.source_info = {
+        "provider": "local_image",
+        "search_term": search_term,
+        "rendition": {"id": None, "width": width, "height": height},
+    }
+    return [item]
+
+
+def _download_videos_local_video_on_demand(
+    *,
+    task_id: str,
+    search_terms: List[str],
+    video_aspect: VideoAspect,
+    audio_duration: float,
+    max_clip_duration: int,
+    material_directory: str,
+    image_motion: ImageMotion = ImageMotion.zoom,
+) -> List[str]:
+    """
+    用本机视频模型为每个脚本片段生成一个短片段，凑够所需时长即停止。
+
+    图生视频模型先用本机生图模型画出画面，再把图片做成动画，画面与文案
+    一致且风格统一。先画完所需的全部画面再逐个生成动画：显卡一次只放得下
+    一个模型，交替生成会让每个画面都重新加载两个大模型。单个片段生成失败
+    （如显存不足）时退回为该图片的缩放片段，不让一个画面拖垮整条视频；
+    没有图片可退回时终止任务。
+    """
+    image_motion = ImageMotion(image_motion)
+    material_directory = material_directory or utils.task_dir(task_id)
+    try:
+        required_duration = float(audio_duration)
+    except (TypeError, ValueError):
+        required_duration = 0.0
+    if required_duration <= 0:
+        return []
+
+    aspect = VideoAspect(video_aspect)
+    size = OPENAI_IMAGE_DEFAULT_SIZES.get(aspect, "1024x1024")
+    clip_model = local_ai.video_model()
+    animates_images = bool(clip_model and clip_model.image_to_video)
+    video_paths: List[str] = []
+    material_sources: list[dict[str, Any]] = []
+    total_duration = 0.0
+    clip_seconds = (
+        clip_model.frames / clip_model.fps if clip_model and clip_model.fps else max_clip_duration
+    )
+    scene_count = math.ceil(required_duration / min(max_clip_duration, clip_seconds))
+    scenes = search_terms[:scene_count]
+    try:
+        image_items = [
+            generate_images_local(term, max_clip_duration, aspect, save_dir=material_directory)[0]
+            if animates_images
+            else None
+            for term in scenes
+        ]
+        for search_term, image_item in zip(scenes, image_items):
+            image_bytes = Path(image_item.url).read_bytes() if image_item else None
+            generation_progress.submitting("local_video")
+            try:
+                clip_bytes, clip_seconds = local_ai.generate_video(search_term, image_bytes, size)
+            except local_ai.LocalAIError as error:
+                if image_item is None:
+                    raise LocalImageMaterialError(str(error)) from None
+                logger.warning(
+                    "local video clip failed, using the scene image instead: "
+                    f"term={search_term!r}, error={error}"
+                )
+                video_file = _render_openai_image_video(
+                    image_item.url, max_clip_duration, image_motion=image_motion
+                )
+                if not video_file:
+                    raise LocalImageMaterialError(
+                        "the scene image could not be rendered locally"
+                    ) from None
+                clip_seconds = float(max_clip_duration)
+            else:
+                video_file = os.path.join(
+                    material_directory, f"local-video-{uuid.uuid4().hex[:12]}.mp4"
+                )
+                with open(video_file, "wb") as clip_file:
+                    clip_file.write(clip_bytes)
+            item = MaterialInfo()
+            item.provider = "local_video"
+            item.url = video_file
+            item.duration = max(1, int(round(clip_seconds)))
+            item.source_info = {"provider": "local_video", "search_term": search_term}
+            video_paths.append(video_file)
+            material_sources.append(_material_source_record(item, video_file))
+            total_duration += min(max_clip_duration, clip_seconds)
+            logger.info(
+                f"local video clip ready: {video_file}, "
+                f"covered={total_duration:.1f}s/{required_duration:.1f}s"
+            )
+            if total_duration >= required_duration:
+                break
+    finally:
+        _persist_material_sources(task_id, material_sources)
+    return video_paths
+
+
 def _render_openai_image_video(
     image_path: str, clip_duration: int, image_motion: ImageMotion = ImageMotion.zoom
 ) -> str:
@@ -2473,11 +2604,23 @@ def download_videos(
             max_clip_duration=max_clip_duration,
             material_directory=material_directory,
         )
-    if source in {"openai_image", "codex_image"}:
+    if source == "local_video":
+        return _download_videos_local_video_on_demand(
+            task_id=task_id,
+            search_terms=search_terms,
+            video_aspect=video_aspect,
+            audio_duration=audio_duration,
+            max_clip_duration=max_clip_duration,
+            material_directory=material_directory,
+            image_motion=image_motion,
+        )
+    if source in {"openai_image", "codex_image", "local_image"}:
         # 与 WaveSpeed 相同的按需付费语义：文生图按张计费，逐段生成、凑够
         # 所需时长立即停止。生成结果是一次性的本地图片文件，也不参与 24
         # 小时搜索缓存——缓存会让不同任务反复拿到同一张图。
         image_options = {}
+        if source == "local_image":
+            image_options = {"image_generator": generate_images_local, "provider": source}
         if source == "codex_image":
             image_options = {
                 "image_generator": generate_images_codex,

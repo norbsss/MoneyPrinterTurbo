@@ -455,6 +455,8 @@ def _material_provider_labels():
         "muapi": tr("MuAPI AI Video"),
         "openai_image": tr("OpenAI Compatible Text-to-Image"),
         "codex_image": tr("codex.image.label"),
+        "local_image": tr("local_ai.label"),
+        "local_video": tr("local_ai.video.label"),
         "local": tr("Local file"),
     }
 
@@ -1141,6 +1143,10 @@ def _render_material_provider_settings(provider):
 
         with st.container():
             render_codex_login(tr)
+    elif provider in ("local_image", "local_video"):
+        from webui.components.local_ai_settings import render_local_ai_settings
+
+        render_local_ai_settings("video" if provider == "local_video" else "image")
     elif provider == "openai_image":
         st.markdown(f"**{tr('OpenAI Compatible Text-to-Image')}**")
 
@@ -1404,6 +1410,58 @@ def _render_settings_dialog():
                     _set_runtime_config(
                         "app", "upload_post_platforms", upload_post_platforms
                     )
+
+                if {"tiktok", "instagram"} & set(upload_post_platforms):
+                    # 与 YouTube 的 containsSyntheticMedia 一致默认开启；Instagram
+                    # 的标注发布后无法撤销，因此在这里明确提示。
+                    upload_post_ai_label = st.checkbox(
+                        tr("upload_post.ai_label"),
+                        value=app_settings.get("upload_post_ai_label", True) is True,
+                        help=tr("upload_post.ai_label.help"),
+                        key="upload_post_ai_label_checkbox",
+                    )
+                    if upload_post_ai_label != (
+                        app_settings.get("upload_post_ai_label", True) is True
+                    ):
+                        _set_runtime_config("app", "upload_post_ai_label", upload_post_ai_label)
+
+                # 定时发布由 Upload-Post 保存并按时执行，到时本机无需开机。
+                schedule_options = ["now", "queue", "delay"]
+                saved_schedule = app_settings.get("upload_post_schedule", "now")
+                if saved_schedule not in schedule_options:
+                    saved_schedule = "now"
+                upload_post_schedule = stable_selectbox(
+                    tr("upload_post.schedule"),
+                    schedule_options,
+                    saved_schedule,
+                    "upload_post_schedule_select",
+                    # 标签在本次渲染时算好：format_func 也会在页面运行之外被调用。
+                    format_func={
+                        value: tr(f"upload_post.schedule.{value}") for value in schedule_options
+                    }.get,
+                    help=tr("upload_post.schedule.help"),
+                )
+                if upload_post_schedule != saved_schedule:
+                    _set_runtime_config("app", "upload_post_schedule", upload_post_schedule)
+                if upload_post_schedule == "delay":
+                    try:
+                        saved_delay = float(
+                            app_settings.get("upload_post_schedule_delay_hours", 2.0)
+                        )
+                    except (TypeError, ValueError):
+                        saved_delay = 2.0
+                    upload_post_delay = st.number_input(
+                        tr("upload_post.schedule.delay_hours"),
+                        min_value=0.5,
+                        max_value=24.0 * 365,
+                        value=min(max(saved_delay, 0.5), 24.0 * 365),
+                        step=0.5,
+                        key="upload_post_schedule_delay_hours_input",
+                    )
+                    if upload_post_delay != saved_delay:
+                        _set_runtime_config(
+                            "app", "upload_post_schedule_delay_hours", float(upload_post_delay)
+                        )
 
                 if "youtube" in upload_post_platforms:
                     yt_status_options = ["public", "private", "unlisted"]

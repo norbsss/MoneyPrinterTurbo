@@ -5,6 +5,7 @@ Docs: https://docs.upload-post.com
 """
 import os
 import time
+from datetime import datetime, timedelta, timezone
 from typing import Callable, Optional
 from uuid import uuid4
 
@@ -18,6 +19,17 @@ from app.config import config
 _UPLOAD_STATUS_POLL_INTERVAL_SECONDS = 10
 _UPLOAD_STATUS_TIMEOUT_SECONDS = 3600
 _MAX_CONSECUTIVE_STATUS_ERRORS = 3
+# Upload-Post 按平台读取的发布文案字段；缺失时回退到通用 title。
+# https://docs.upload-post.com/api/upload-video
+_PLATFORM_TITLE_FIELDS = {"tiktok": "tiktok_title", "instagram": "instagram_title"}
+_PLATFORM_TEXT_LIMIT = 2200
+SCHEDULE_NOW = "now"
+SCHEDULE_QUEUE = "queue"
+SCHEDULE_DELAY = "delay"
+SCHEDULE_MODES = (SCHEDULE_NOW, SCHEDULE_QUEUE, SCHEDULE_DELAY)
+# Upload-Post 只接受未来 365 天内的 scheduled_date。
+_MAX_SCHEDULE_DELAY_HOURS = 24 * 365
+_DEFAULT_SCHEDULE_DELAY_HOURS = 2.0
 
 
 class UploadPostService:
@@ -163,6 +175,44 @@ class UploadPostService:
         return config.app.get("upload_post_youtube_privacy_status", "public")
 
     @property
+    def schedule_mode(self) -> str:
+        mode = str(config.app.get("upload_post_schedule", SCHEDULE_NOW) or SCHEDULE_NOW)
+        return mode if mode in SCHEDULE_MODES else SCHEDULE_NOW
+
+    @property
+    def schedule_delay_hours(self) -> float:
+        try:
+            hours = float(
+                config.app.get("upload_post_schedule_delay_hours", _DEFAULT_SCHEDULE_DELAY_HOURS)
+            )
+        except (TypeError, ValueError):
+            hours = _DEFAULT_SCHEDULE_DELAY_HOURS
+        return min(max(hours, 0.1), _MAX_SCHEDULE_DELAY_HOURS)
+
+    def schedule_request(self, now: datetime | None = None) -> dict | None:
+        """发布时间的快照，在视频排队发布时确定。
+
+        延迟发布从排队时刻起算，之后修改设置不影响已排队的视频，与 YouTube
+        隐私和受众声明的快照语义一致。返回 None 表示立即发布。
+        """
+        mode = self.schedule_mode
+        if mode == SCHEDULE_QUEUE:
+            return {"mode": SCHEDULE_QUEUE}
+        if mode == SCHEDULE_DELAY:
+            when = (now or datetime.now(timezone.utc)) + timedelta(hours=self.schedule_delay_hours)
+            return {
+                "mode": SCHEDULE_DELAY,
+                "scheduled_date": when.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            }
+        return None
+
+    @property
+    def ai_label(self) -> bool:
+        # TikTok 与 Instagram 要求标注 AI 生成内容，与 YouTube 的
+        # containsSyntheticMedia 一致默认开启。Instagram 的标注发布后无法撤销。
+        return config.app.get("upload_post_ai_label", True) is True
+
+    @property
     def youtube_made_for_kids(self) -> bool:
         # 未配置时，后续 YouTube 上传显式声明为非面向儿童；儿童内容需设置为 true。
         # 这与旧版省略声明字段不同，但不会修改已上传的视频。
@@ -180,6 +230,8 @@ class UploadPostService:
         privacy_level: str = "PUBLIC_TO_EVERYONE",
         youtube_extra: Optional[dict] = None,
         on_background_start: Callable[[str], None] | None = None,
+        platform_titles: Optional[dict] = None,
+        schedule: Optional[dict] = None,
     ) -> dict:
         if not self.is_configured():
             logger.warning("Upload-Post is not configured. Skipping cross-post.")
@@ -231,6 +283,21 @@ class UploadPostService:
 
                 for platform in platforms:
                     data.append(('platform[]', platform))
+
+                # 每个平台各自的文案（含话题标签），未提供时 Upload-Post 使用 title。
+                for platform, text in (platform_titles or {}).items():
+                    field = _PLATFORM_TITLE_FIELDS.get(platform)
+                    if field and platform in platforms and str(text or "").strip():
+                        data.append((field, str(text)[:_PLATFORM_TEXT_LIMIT]))
+
+                if self.ai_label and any(p in _PLATFORM_TITLE_FIELDS for p in platforms):
+                    data.append(('is_ai_generated', "true"))
+
+                # Upload-Post 自己保存定时任务并按时发布，本地进程退出也不受影响。
+                if schedule and schedule.get("mode") == SCHEDULE_QUEUE:
+                    data.append(('add_to_queue', "true"))
+                elif schedule and schedule.get("scheduled_date"):
+                    data.append(('scheduled_date', schedule["scheduled_date"]))
 
                 if has_youtube:
                     # multipart 表单使用小写布尔字符串，且不能依赖 LLM 元数据
@@ -287,6 +354,23 @@ class UploadPostService:
             ):
                 logger.error("Upload-Post returned an invalid response to upload")
                 return unconfirmed_response("Upload-Post returned an invalid response")
+
+            if result["success"] and schedule:
+                # 定时发布返回 202 与 job_id，没有 request_id 也没有平台结果；
+                # 平台结果要到发布时间才产生，不能按后台上传轮询一小时后报失败。
+                job_id = result.get("job_id")
+                if not isinstance(job_id, str) or not job_id.strip():
+                    return unconfirmed_response("Upload-Post scheduled the post without a job_id")
+                logger.info(
+                    "Upload-Post scheduled the post: "
+                    f"job_id={job_id.strip()}, scheduled_date={result.get('scheduled_date')}"
+                )
+                return {
+                    **result,
+                    "success": True,
+                    "scheduled": True,
+                    "job_id": job_id.strip(),
+                }
 
             if result["success"]:
                 is_background = "results" not in result
@@ -400,6 +484,8 @@ def cross_post_video(
     youtube_extra: Optional[dict] = None,
     on_background_start: Callable[[str], None] | None = None,
     account: dict | None = None,
+    platform_titles: Optional[dict] = None,
+    schedule: Optional[dict] = None,
 ) -> dict:
     service = UploadPostService(account) if account is not None else upload_post_service
     return service.upload_video(
@@ -408,4 +494,6 @@ def cross_post_video(
         platforms,
         youtube_extra=youtube_extra,
         on_background_start=on_background_start,
+        platform_titles=platform_titles,
+        schedule=schedule,
     )

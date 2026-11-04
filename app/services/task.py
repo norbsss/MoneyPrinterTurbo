@@ -25,6 +25,7 @@ from app.services import (
     infistar_video,
     jalapeno_video,
     llm,
+    local_ai,
     loomloom,
     material,
     metaso_minimax,
@@ -102,7 +103,8 @@ _VIDEO_MUSIC_PROVIDERS = {
 _SUPPORTED_VIDEO_SOURCES = frozenset({
     "pexels", "pixabay", "coverr", "local", "wavespeed",
     "volcengine_seedance", "ofox", "metaso_minimax", "muapi",
-    "loomloom", "openai_image", "codex_image", "infistar", "jalapeno",
+    "loomloom", "openai_image", "codex_image", "local_image", "local_video",
+    "infistar", "jalapeno",
 })
 
 
@@ -1286,6 +1288,17 @@ def recover_interrupted_cross_posts(page_size: int = 100) -> int | None:
     return recovered
 
 
+def _social_post_text(metadata: dict) -> str:
+    """短视频平台的发布文案：正文后接话题标签，标签不在正文里时才会出现在帖子中。"""
+    caption = str(metadata.get("caption") or metadata.get("title") or "").strip()
+    hashtags = " ".join(
+        tag if tag.startswith("#") else f"#{tag}"
+        for tag in (str(item).strip() for item in metadata.get("hashtags") or [])
+        if tag and tag.lstrip("#") and tag not in caption
+    )
+    return f"{caption}\n\n{hashtags}".strip() if hashtags else caption
+
+
 def _run_cross_post(
     task_id: str,
     video_paths: tuple[str, ...],
@@ -1296,6 +1309,7 @@ def _run_cross_post(
     youtube_privacy_status: str,
     youtube_made_for_kids: bool = False,
     upload_account: dict | None = None,
+    schedule: dict | None = None,
 ) -> None:
     """后台执行跨平台发布，并只补充发布相关的任务字段。"""
     results = []
@@ -1322,19 +1336,37 @@ def _run_cross_post(
             f"cross-post started, task_id: {task_id}, platforms: {', '.join(platforms)}"
         )
         youtube_extra = None
+        platform_titles = {}
         post_title = video_subject or "Check out this video! #shorts #viral"
         if platforms:
+            # 每个平台单独生成文案：长度上限、话题数量和语气各不相同，
+            # 同一段文字直接复用会在某些平台被截断或缺少话题标签。
+            metadata_by_social = {}
+
+            def social_metadata(social_platform: str) -> dict:
+                if social_platform not in metadata_by_social:
+                    metadata_by_social[social_platform] = llm.generate_social_metadata(
+                        video_subject=video_subject,
+                        video_script=video_script,
+                        language=video_language or "",
+                        platform=social_platform,
+                    )
+                return metadata_by_social[social_platform]
+
             has_youtube = any(platform.startswith("youtube") for platform in platforms)
-            social_platform = "youtube_shorts"
-            if not has_youtube:
-                first = (platforms[0] or "").strip().lower()
+            for platform in platforms:
+                key = (platform or "").strip().lower()
+                if key.startswith("youtube"):
+                    continue
                 # llm.py resolves unknown ids to its default platform.
-                social_platform = _CROSS_POST_SOCIAL_PLATFORMS.get(first, first)
-            metadata = llm.generate_social_metadata(
-                video_subject=video_subject,
-                video_script=video_script,
-                language=video_language or "",
-                platform=social_platform,
+                platform_metadata = social_metadata(_CROSS_POST_SOCIAL_PLATFORMS.get(key, key))
+                platform_titles[key] = _social_post_text(platform_metadata)
+            metadata = social_metadata(
+                "youtube_shorts"
+                if has_youtube
+                else _CROSS_POST_SOCIAL_PLATFORMS.get(
+                    (platforms[0] or "").strip().lower(), (platforms[0] or "").strip().lower()
+                )
             )
             if has_youtube:
                 youtube_extra = {
@@ -1378,6 +1410,10 @@ def _run_cross_post(
             upload_kwargs = {}
             if upload_account is not None:
                 upload_kwargs["account"] = upload_account
+            if platform_titles:
+                upload_kwargs["platform_titles"] = platform_titles
+            if schedule:
+                upload_kwargs["schedule"] = schedule
             result = upload_post.cross_post_video(
                 video_path=video_path,
                 title=post_title,
@@ -1526,6 +1562,8 @@ def _schedule_cross_post(
             youtube_privacy_status,
             youtube_made_for_kids,
             upload_post.upload_post_service.snapshot_account(),
+            # 延迟发布从排队时刻起算，并固定当时的发布方式。
+            upload_post.upload_post_service.schedule_request(),
         )
         _register_cross_post_future(task_id, future)
         future.add_done_callback(partial(_finalize_cross_post_future, task_id))
@@ -1670,6 +1708,27 @@ def _run_pipeline(
             "openai_image_model in config.toml (openai_image_api_keys is "
             "optional for local gateways that need no auth)",
         )
+
+    if stop_at in {"materials", "video"} and params.video_source in {
+        "local_image",
+        "local_video",
+    }:
+        ready, reason = local_ai.readiness(
+            "video" if params.video_source == "local_video" else "image"
+        )
+        if not ready:
+            return _mark_task_failed(
+                task_id,
+                "preflight",
+                {
+                    "local_ai.runtime_missing": "Local AI needs its runtime: install it "
+                    "in Settings > AI Image > Local AI",
+                    "local_ai.model_missing": "A selected local model is not downloaded: "
+                    "download it in Settings > AI Image > Local AI",
+                    "local_ai.no_model_fits": "No local model fits this computer's GPU "
+                    "or memory",
+                }.get(reason, reason),
+            )
 
     # 只有完整成片流程需要视频配乐供应商。尽早阻止缺少 Key 的完整任务，避免
     # 先消耗 LLM、TTS 和素材服务额度；中间产物接口仍可独立使用。

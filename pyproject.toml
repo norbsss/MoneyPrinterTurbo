@@ -78,7 +78,7 @@ dev = [
 # 因此与 app 服务层、服务启动入口和面向 Agent 用户发布的 Skill 脚本一起
 # 纳入统计，避免覆盖率只反映局部模块。
 branch = true
-source = ["app", "cli", "webui", "main", "docs/skill"]
+source = ["app", "cli", "webui", "local_ai", "main", "docs/skill"]
 
 [tool.coverage.report]
 # Python 3.11 和 3.13 完整测试的实测分支覆盖率均超过 70.4%。以 70%
@@ -89,7 +89,7 @@ show_missing = true
 skip_covered = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["app", "webui"]
+packages = ["app", "webui", "local_ai"]
 
 # 字体保留中英文默认字体和越南语字体。两个大体积备用字重不进入安装包，
 # 避免 wheel 超过 PyPI 默认文件大小限制；源码版的字体文件保持原样。
@@ -112,7 +112,7 @@ exclude = ["**/.DS_Store", "**/__pycache__", "**/*.pyc", "**/.streamlit"]
 [tool.hatch.build.targets.sdist]
 # 使用白名单，禁止本机配置、凭据、storage、AGENTS.md 等混入源码发行包。
 include = [
-    "/app", "/cli.py", "/webui", "/config.example.toml", "/pyproject.toml",
+    "/app", "/cli.py", "/webui", "/local_ai", "/config.example.toml", "/pyproject.toml",
     "/uv.lock", "/LICENSE", "/docs/pypi-description.md", "/docs/packaging.md",
     "/test/services/test_packaging.py", "/resource/songs", "/resource/public",
     "/resource/fonts/STHeitiMedium.ttc", "/resource/fonts/MicrosoftYaHeiBold.ttc",

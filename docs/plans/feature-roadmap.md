@@ -60,9 +60,9 @@ Add both to the source list in `task.py:103` and the `stop_at` branches around `
 **UI.** New settings tab "Local AI": hardware card, recommended models with size/VRAM/license, download/delete with progress, disk usage, sidecar status/logs, "test generate" button.
 
 ### Phases
-1. Move sidecar into `local_ai/`, add `hardware.py`, `/hardware` + `/models` endpoints, managed start from the app. Ship `local_image` with the existing SDXL model.
-2. Catalog + downloader + model picker UI; add FLUX tier.
-3. `local_video` with one model family (LTX-Video first: fastest on 12–16 GB), keyframe → I2V, per-scene fallback.
+1. Move sidecar into `local_ai/`, add `hardware.py`, `/hardware` + `/models` endpoints, managed start from the app. Ship `local_image` with the existing SDXL model. **Done 2026-11-04**, except a `/hardware` endpoint: the app detects hardware itself, before the runtime exists.
+2. Catalog + downloader + model picker UI; add FLUX tier. **Done 2026-11-04**: catalog has FLUX.1 schnell (gated), RealVisXL V5 Lightning and DreamShaper 8; downloads go to plain folders because the Hugging Face cache needs symlinks that Windows refuses without Developer Mode.
+3. `local_video` with one model family (LTX-Video first: fastest on 12–16 GB), keyframe → I2V, per-scene fallback. **Done 2026-11-04 with Wan 2.2 TI2V 5B instead** (Apache-2.0; LTX-Video has a custom license and 48–93 GB repos). Loaded in 4-bit NF4 (bitsandbytes) and resharded on first load into 1 GB bf16 files, because loading 5 GB fp32 shards failed with Windows os error 1455 when WSL held most of the commit limit. About 2 minutes per 3 s 480p clip on an RTX 4070 Ti SUPER, so a 50 s video takes roughly 40 minutes; Wan 2.1 T2V 1.3B covers 8 GB cards.
 4. Second video family (Wan), multi-GPU scheduling, Docker image.
 
 ### Risks
@@ -106,9 +106,11 @@ app/controllers/v1/publish.py   # POST /v1/publish, GET /v1/publish/jobs, DELETE
 **Batch / autopilot mode.** Topic list or RSS → generate N videos → auto-schedule across slots. Optional "review before publish" gate.
 
 ### Phases
-1. Extract `Publisher` protocol; wrap existing Upload-Post as adapter (no behavior change, keep tests green).
-2. Metadata + thumbnail generation, editable publish form, publish history panel.
-3. Scheduler + `/v1/publish` API.
+Upload-Post turned out to cover more than assumed: per-platform text fields (`tiktok_title`, `instagram_title`), `is_ai_generated`, server-side scheduling (`scheduled_date`, `add_to_queue`, returning `202` with a `job_id`), and cover/thumbnail fields ([docs](https://docs.upload-post.com/api/upload-video)). So the Upload-Post path gets these directly, and the `Publisher` protocol waits until a second publisher (YouTube direct) needs it.
+
+1. Extract `Publisher` protocol; wrap existing Upload-Post as adapter (no behavior change, keep tests green). **Deferred** until YouTube direct.
+2. Metadata + thumbnail generation, editable publish form, publish history panel. **Partly done 2026-11-04**: a caption with hashtags per platform, and AI-generated labels for TikTok and Instagram. Thumbnails, editable form and history panel remain.
+3. Scheduler + `/v1/publish` API. **Scheduling done 2026-11-04** through Upload-Post (publish now, next queue slot, or after N hours); Upload-Post publishes even if this computer is off. `/v1/publish` remains.
 4. YouTube direct.
 5. TikTok and Instagram direct (opt-in, documented app setup).
 6. Autopilot batch mode.

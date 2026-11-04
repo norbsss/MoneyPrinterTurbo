@@ -50,6 +50,8 @@ _CLI_VIDEO_SOURCES = (
     "muapi",
     "openai_image",
     "codex_image",
+    "local_image",
+    "local_video",
     "local",
 )
 
