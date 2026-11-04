@@ -25,6 +25,7 @@ from app.services import (
     infistar_video,
     jalapeno_video,
     llm,
+    local_ai,
     loomloom,
     material,
     metaso_minimax,
@@ -102,7 +103,7 @@ _VIDEO_MUSIC_PROVIDERS = {
 _SUPPORTED_VIDEO_SOURCES = frozenset({
     "pexels", "pixabay", "coverr", "local", "wavespeed",
     "volcengine_seedance", "ofox", "metaso_minimax", "muapi",
-    "loomloom", "openai_image", "codex_image", "infistar", "jalapeno",
+    "loomloom", "openai_image", "codex_image", "local_image", "infistar", "jalapeno",
 })
 
 
@@ -1670,6 +1671,22 @@ def _run_pipeline(
             "openai_image_model in config.toml (openai_image_api_keys is "
             "optional for local gateways that need no auth)",
         )
+
+    if stop_at in {"materials", "video"} and params.video_source == "local_image":
+        ready, reason = local_ai.readiness()
+        if not ready:
+            return _mark_task_failed(
+                task_id,
+                "preflight",
+                {
+                    "local_ai.runtime_missing": "Local AI images need the local AI runtime: "
+                    "install it in Settings > AI Image > Local AI",
+                    "local_ai.model_missing": "The selected local image model is not "
+                    "downloaded: download it in Settings > AI Image > Local AI",
+                    "local_ai.no_model_fits": "No local image model fits this computer's "
+                    "GPU or memory",
+                }.get(reason, reason),
+            )
 
     # 只有完整成片流程需要视频配乐供应商。尽早阻止缺少 Key 的完整任务，避免
     # 先消耗 LLM、TTS 和素材服务额度；中间产物接口仍可独立使用。

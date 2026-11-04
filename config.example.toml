@@ -234,6 +234,25 @@ openai_image_size = ""
 # Example: "cinematic photo of {term}, photorealistic, high detail"
 openai_image_prompt_template = ""
 
+# Local AI image material source ("local_image"): one image per scene on this
+# computer's GPU, free and offline. Set it up in the WebUI under
+# Settings > AI Image > Local AI, which detects the hardware, installs a
+# separate PyTorch runtime and downloads the recommended model.
+# Catalog model id; empty uses the model recommended for this hardware.
+local_ai_image_model = ""
+# Where models are downloaded (several GB each). Empty: storage/local_ai/models.
+local_ai_models_dir = ""
+# Where the PyTorch runtime is installed. Empty: storage/local_ai/runtime.
+local_ai_runtime_dir = ""
+# GPU index from nvidia-smi; empty picks the GPU with the most memory.
+local_ai_gpu_index = ""
+# Address of the local image server. Change the port if 7862 is taken.
+local_ai_url = "http://127.0.0.1:7862"
+# Start the image server automatically when a video needs images.
+local_ai_autostart = true
+# Only for gated models such as FLUX.1 schnell (or set HF_TOKEN).
+local_ai_hf_api_token = ""
+
 # Optional TwelveLabs integration for semantic material ranking and video QA.
 # Install the optional dependency with: uv sync --extra twelvelabs
 # Create an API key at https://playground.twelvelabs.io/

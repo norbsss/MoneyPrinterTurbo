@@ -60,8 +60,8 @@ Add both to the source list in `task.py:103` and the `stop_at` branches around `
 **UI.** New settings tab "Local AI": hardware card, recommended models with size/VRAM/license, download/delete with progress, disk usage, sidecar status/logs, "test generate" button.
 
 ### Phases
-1. Move sidecar into `local_ai/`, add `hardware.py`, `/hardware` + `/models` endpoints, managed start from the app. Ship `local_image` with the existing SDXL model.
-2. Catalog + downloader + model picker UI; add FLUX tier.
+1. Move sidecar into `local_ai/`, add `hardware.py`, `/hardware` + `/models` endpoints, managed start from the app. Ship `local_image` with the existing SDXL model. **Done 2026-11-04**, except a `/hardware` endpoint: the app detects hardware itself, before the runtime exists.
+2. Catalog + downloader + model picker UI; add FLUX tier. **Done 2026-11-04**: catalog has FLUX.1 schnell (gated), RealVisXL V5 Lightning and DreamShaper 8; downloads go to plain folders because the Hugging Face cache needs symlinks that Windows refuses without Developer Mode.
 3. `local_video` with one model family (LTX-Video first: fastest on 12–16 GB), keyframe → I2V, per-scene fallback.
 4. Second video family (Wan), multi-GPU scheduling, Docker image.
 

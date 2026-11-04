@@ -1,5 +1,7 @@
 # Local image server for `openai_image`
 
+> The WebUI now has this built in: pick **Local AI (this computer)** as the AI image source and set it up under Settings > AI Image > Local AI. It detects the GPU, installs the runtime, downloads the recommended model and starts the server for you (code in `local_ai/`). This folder remains as a standalone example with a content policy.
+
 Stock footage often has little to do with the script. The `openai_image` source fixes that by generating one image per script segment. This folder has a small server that does it on your own GPU, so there are no per-image costs.
 
 It exposes the OpenAI `/v1/images/generations` API and runs [RealVisXL V5.0 Lightning](https://huggingface.co/SG161222/RealVisXL_V5.0_Lightning), a photoreal SDXL model that needs about 6 steps per image.

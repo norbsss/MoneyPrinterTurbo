@@ -29,6 +29,7 @@ FIELDS = {
     "muapi": ("ai_video", "muapi_api_key_input"),
     "openai_image": ("ai_image", "openai_image_base_url_input"),
     "codex_image": ("ai_image", "codex_image_timeout_input"),
+    "local_image": ("ai_image", "local_ai_hf_api_token_input"),
 }
 
 
@@ -144,6 +145,7 @@ PROVIDER_LABELS = {
     "muapi": "MuAPI AI Video",
     "openai_image": "OpenAI Compatible Text-to-Image",
     "codex_image": "codex.image.label",
+    "local_image": "local_ai.label",
 }
 
 

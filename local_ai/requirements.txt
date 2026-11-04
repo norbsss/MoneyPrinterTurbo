@@ -1,0 +1,13 @@
+# The GPU server's own environment. runtime.py installs torch first, from the
+# PyTorch wheel index that matches the GPU driver, then these.
+diffusers>=0.35
+transformers>=4.56
+accelerate>=1.10
+safetensors
+huggingface_hub>=1.0
+sentencepiece
+protobuf
+fastapi
+uvicorn
+pillow
+requests

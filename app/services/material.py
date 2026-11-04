@@ -28,6 +28,7 @@ from app.services import (
     generation_progress,
     infistar_video,
     jalapeno_video,
+    local_ai,
     material_cache,
     material_upload,
     metaso_minimax,
@@ -82,6 +83,10 @@ class CodexImageMaterialError(OpenAIImagePaidResultError):
             "codex.image.render_failed": "Could not render the generated Codex image. Generation stopped without retrying.",
         }
         super().__init__(messages.get(self.key, str(error)))
+
+
+class LocalImageMaterialError(OpenAIImagePaidResultError):
+    """本机生图失败：通常是服务无法启动或模型缺失，后续关键词同样会失败，因此终止任务。"""
 
 
 def _safe_public_url(value: Any) -> str | None:
@@ -1906,6 +1911,40 @@ def generate_images_codex(
     return [item]
 
 
+def generate_images_local(
+    search_term: str,
+    minimum_duration: int,
+    video_aspect: VideoAspect = VideoAspect.portrait,
+    save_dir: str = "",
+) -> List[MaterialInfo]:
+    """用本机 GPU 服务为一个脚本关键词生成一张图片，素材结构与 OpenAI 兼容生图一致。"""
+    aspect = VideoAspect(video_aspect)
+    if minimum_duration <= 0:
+        return []
+    generation_progress.submitting("local_image")
+    try:
+        # 服务端会追加画风与负面提示词，这里只传关键词本身。
+        image_bytes = local_ai.generate_image(
+            search_term,
+            OPENAI_IMAGE_DEFAULT_SIZES.get(aspect, "1024x1024"),
+        )
+        image_path, width, height = _save_openai_image_file(image_bytes, save_dir)
+    except local_ai.LocalAIError as error:
+        raise LocalImageMaterialError(str(error)) from None
+    except _OpenAIImageDecodeError:
+        raise LocalImageMaterialError("the local AI server returned an invalid image") from None
+    item = MaterialInfo()
+    item.provider = "local_image"
+    item.url = image_path
+    item.duration = max(int(minimum_duration), 1)
+    item.source_info = {
+        "provider": "local_image",
+        "search_term": search_term,
+        "rendition": {"id": None, "width": width, "height": height},
+    }
+    return [item]
+
+
 def _render_openai_image_video(
     image_path: str, clip_duration: int, image_motion: ImageMotion = ImageMotion.zoom
 ) -> str:
@@ -2473,11 +2512,13 @@ def download_videos(
             max_clip_duration=max_clip_duration,
             material_directory=material_directory,
         )
-    if source in {"openai_image", "codex_image"}:
+    if source in {"openai_image", "codex_image", "local_image"}:
         # 与 WaveSpeed 相同的按需付费语义：文生图按张计费，逐段生成、凑够
         # 所需时长立即停止。生成结果是一次性的本地图片文件，也不参与 24
         # 小时搜索缓存——缓存会让不同任务反复拿到同一张图。
         image_options = {}
+        if source == "local_image":
+            image_options = {"image_generator": generate_images_local, "provider": source}
         if source == "codex_image":
             image_options = {
                 "image_generator": generate_images_codex,

@@ -455,6 +455,7 @@ def _material_provider_labels():
         "muapi": tr("MuAPI AI Video"),
         "openai_image": tr("OpenAI Compatible Text-to-Image"),
         "codex_image": tr("codex.image.label"),
+        "local_image": tr("local_ai.label"),
         "local": tr("Local file"),
     }
 
@@ -1141,6 +1142,10 @@ def _render_material_provider_settings(provider):
 
         with st.container():
             render_codex_login(tr)
+    elif provider == "local_image":
+        from webui.components.local_ai_settings import render_local_ai_settings
+
+        render_local_ai_settings()
     elif provider == "openai_image":
         st.markdown(f"**{tr('OpenAI Compatible Text-to-Image')}**")
 

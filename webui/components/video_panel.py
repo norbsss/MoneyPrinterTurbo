@@ -95,6 +95,7 @@ def _render_video_settings(panel, params):
                 "loomloom": tr("Shengsuan Cloud AI Video"),
                 "openai_image": tr("OpenAI Compatible Text-to-Image"),
                 "codex_image": tr("codex.image.label"),
+                "local_image": tr("local_ai.label"),
                 "local": tr("Local file"),
             }
             saved_video_source_name = str(
@@ -288,7 +289,7 @@ def _render_video_settings(panel, params):
                 "ui", "video_fit_mode", params.video_fit_mode.value
             )
 
-            if params.video_source in {"local", "openai_image", "codex_image"}:
+            if params.video_source in {"local", "openai_image", "codex_image", "local_image"}:
                 image_motion_labels = {
                     ImageMotion.static.value: tr("Static Image"),
                     ImageMotion.zoom.value: tr("Slow Zoom"),

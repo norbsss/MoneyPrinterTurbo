@@ -20,6 +20,7 @@ from app.services import (
     muapi,
     infistar_video,
     jalapeno_video,
+    local_ai,
     ofox,
     volcengine_seedance,
     voice,
@@ -246,6 +247,7 @@ def _render_generation_controls(
             "loomloom",
             "openai_image",
             "codex_image",
+            "local_image",
             "local",
         ]:
             _remove_active_generation_task(task_id)
@@ -391,6 +393,13 @@ def _render_generation_controls(
             _remove_active_generation_task(task_id)
             st.error(tr("Please Configure the OpenAI Image Source"))
             st.stop()
+
+        if params.video_source == "local_image":
+            local_ai_ready, local_ai_reason = local_ai.readiness()
+            if not local_ai_ready:
+                _remove_active_generation_task(task_id)
+                st.error(tr(local_ai_reason))
+                st.stop()
 
         loomloom_video_request = None
         if params.video_source == "loomloom":
