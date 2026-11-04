@@ -49,9 +49,11 @@ def _render_hardware(section):
             tr("local_ai.gpu"),
             options,
             index=options.index(saved) if saved in options else 0,
-            format_func=lambda value: tr("local_ai.gpu.auto") if value == "auto" else next(
-                f"GPU {gpu.index}: {gpu.name}" for gpu in nvidia if str(gpu.index) == value
-            ),
+            # 标签在本次渲染时算好：format_func 也会在页面运行之外被调用。
+            format_func={
+                "auto": tr("local_ai.gpu.auto"),
+                **{str(gpu.index): f"GPU {gpu.index}: {gpu.name}" for gpu in nvidia},
+            }.get,
             key=f"local_ai_gpu_index_select_{section}",
         )
         if selected != saved:
