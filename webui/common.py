@@ -73,6 +73,7 @@ VIDEO_SOURCE_GROUPS = {
         "jalapeno",
         "wavespeed",
         "muapi",
+        "local_video",
     ),
     "ai_image": ("openai_image", "codex_image", "local_image"),
     "local": ("local",),

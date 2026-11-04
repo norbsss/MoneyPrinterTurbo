@@ -24,6 +24,8 @@ from local_ai import catalog, hardware, models, runtime
 DEFAULT_BASE_URL = "http://127.0.0.1:7862"
 # 首次请求要把模型从磁盘读入显存，大模型可能需要数分钟。
 IMAGE_REQUEST_TIMEOUT = (5, 900)
+# 一个片段在 16 GB 显卡上需要数分钟，首次还要加载约 20 GB 的模型。
+VIDEO_REQUEST_TIMEOUT = (5, 3600)
 SERVER_START_TIMEOUT_SECONDS = 120
 _HARDWARE_CACHE_SECONDS = 60
 
@@ -95,15 +97,23 @@ def gpu_hardware() -> hardware.Hardware:
     return detected
 
 
-def image_model() -> catalog.Model | None:
-    """用户选定的生图模型；未选择时使用本机推荐模型。"""
-    selected = str(_setting("local_ai_image_model", "") or "").strip()
+def _selected_model(kind: str) -> catalog.Model | None:
+    """用户选定的模型；未选择或已不在目录中时使用本机推荐模型。"""
+    selected = str(_setting(f"local_ai_{kind}_model", "") or "").strip()
     if selected:
         model = catalog.get(selected)
-        if model is not None and model.kind == "image":
+        if model is not None and model.kind == kind:
             return model
-    recommended = catalog.recommend(gpu_hardware(), "image")
+    recommended = catalog.recommend(gpu_hardware(), kind)
     return recommended.model if recommended else None
+
+
+def image_model() -> catalog.Model | None:
+    return _selected_model("image")
+
+
+def video_model() -> catalog.Model | None:
+    return _selected_model("video")
 
 
 def model_installed(model: catalog.Model) -> bool:
@@ -114,15 +124,22 @@ def is_runtime_installed() -> bool:
     return runtime.is_installed(runtime_dir())
 
 
-def readiness() -> tuple[bool, str]:
-    """生成前的最小检查：运行环境已安装且所选模型已下载完整。"""
+def readiness(kind: str = "image") -> tuple[bool, str]:
+    """生成前的最小检查：运行环境已安装且所选模型已下载完整。
+
+    图生视频模型从每个画面的图片开始动画，因此视频还要求生图模型可用。
+    """
     if not is_runtime_installed():
         return False, "local_ai.runtime_missing"
-    model = image_model()
-    if model is None:
-        return False, "local_ai.no_model_fits"
-    if not model_installed(model):
-        return False, "local_ai.model_missing"
+    needed = [image_model()]
+    if kind == "video":
+        clip_model = video_model()
+        needed = [clip_model] + (needed if clip_model and clip_model.image_to_video else [])
+    for model in needed:
+        if model is None:
+            return False, "local_ai.no_model_fits"
+        if not model_installed(model):
+            return False, "local_ai.model_missing"
     return True, ""
 
 
@@ -223,6 +240,9 @@ def start_server() -> None:
     env["PYTHONUNBUFFERED"] = "1"
     if model is not None:
         env["LOCAL_AI_IMAGE_MODEL"] = model.id
+    clip_model = video_model()
+    if clip_model is not None:
+        env["LOCAL_AI_VIDEO_MODEL"] = clip_model.id
     if target is not None and target.vendor == "nvidia":
         # 只让服务看到选定的显卡，模型不会被拆到两块卡上。
         env["CUDA_VISIBLE_DEVICES"] = str(target.index)
@@ -315,3 +335,36 @@ def generate_image(prompt: str, size: str) -> bytes:
         return base64.b64decode(response.json()["data"][0]["b64_json"])
     except (ValueError, KeyError, IndexError, TypeError) as error:
         raise LocalAIError("local AI server returned no image") from error
+
+
+def generate_video(prompt: str, image: bytes | None, size: str) -> tuple[bytes, float]:
+    """请求一个片段，返回 MP4 字节与片段时长（秒）。服务未运行时自动启动。"""
+    import base64
+
+    model = video_model()
+    if model is None:
+        raise LocalAIError("no local video model fits this computer's GPU or memory")
+    ensure_server()
+    payload = {"model": model.id, "prompt": prompt, "size": size}
+    if image is not None:
+        payload["image"] = base64.b64encode(image).decode()
+    try:
+        with _session() as session:
+            response = session.post(
+                f"{base_url()}/v1/videos/generations",
+                json=payload,
+                timeout=VIDEO_REQUEST_TIMEOUT,
+            )
+    except requests.RequestException as error:
+        raise LocalAIError(f"local AI server request failed: {error}") from error
+    if not response.ok:
+        try:
+            detail = response.json().get("detail", response.text)
+        except ValueError:
+            detail = response.text
+        raise LocalAIError(f"local AI server returned {response.status_code}: {detail}")
+    try:
+        clip = response.json()["data"][0]
+        return base64.b64decode(clip["b64_mp4"]), float(clip["seconds"])
+    except (ValueError, KeyError, IndexError, TypeError) as error:
+        raise LocalAIError("local AI server returned no clip") from error

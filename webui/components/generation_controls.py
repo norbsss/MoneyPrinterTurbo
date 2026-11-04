@@ -248,6 +248,7 @@ def _render_generation_controls(
             "openai_image",
             "codex_image",
             "local_image",
+            "local_video",
             "local",
         ]:
             _remove_active_generation_task(task_id)
@@ -394,8 +395,10 @@ def _render_generation_controls(
             st.error(tr("Please Configure the OpenAI Image Source"))
             st.stop()
 
-        if params.video_source == "local_image":
-            local_ai_ready, local_ai_reason = local_ai.readiness()
+        if params.video_source in ("local_image", "local_video"):
+            local_ai_ready, local_ai_reason = local_ai.readiness(
+                "video" if params.video_source == "local_video" else "image"
+            )
             if not local_ai_ready:
                 _remove_active_generation_task(task_id)
                 st.error(tr(local_ai_reason))

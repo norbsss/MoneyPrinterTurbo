@@ -13,7 +13,7 @@ from app.config import config
 from app.models.schema import VideoAspect, VideoParams
 from app.services import local_ai, material, state as sm
 from app.services import task as task_service
-from local_ai import catalog, hardware, models
+from local_ai import catalog, hardware, models, runtime
 
 
 def _png_bytes(size=(16, 24)):
@@ -54,7 +54,7 @@ def _install(model_id, models_dir):
 def _install_runtime(runtime_dir):
     venv = runtime_dir / "venv"
     venv.mkdir(parents=True, exist_ok=True)
-    (venv / ".mpt-installed").write_text("cu128")
+    (venv / ".mpt-installed").write_text(f"cu128 {runtime._requirements_digest()}")
 
 
 def test_readiness_names_the_missing_step(local_settings):
@@ -214,4 +214,119 @@ def test_task_preflight_fails_before_script_when_local_ai_is_not_ready(local_set
         result = task_service.start("local-preflight", params, stop_at="materials")
     assert result["failed_stage"] == "preflight"
     assert "install it in Settings" in result["error"]
+    generate_script.assert_not_called()
+
+
+# ---------------------------------------------------------------- 本机视频
+
+
+def test_video_readiness_needs_the_image_model_only_for_image_to_video(local_settings):
+    _install_runtime(local_settings.tmp_path / "runtime")
+    models_dir = local_settings.settings["local_ai_models_dir"]
+    _install("wan2.2-ti2v-5b", models_dir)
+    # Wan 2.2 TI2V 动画的是每个画面的图片，生图模型缺失时视频也无法生成。
+    assert local_ai.readiness("video") == (False, "local_ai.model_missing")
+    _install("realvisxl-v5-lightning", models_dir)
+    assert local_ai.readiness("video") == (True, "")
+
+    local_settings.settings["local_ai_video_model"] = "wan2.1-t2v-1.3b"
+    _install("wan2.1-t2v-1.3b", models_dir)
+    models.delete(catalog.get("realvisxl-v5-lightning"), models_dir)
+    assert local_ai.readiness("video") == (True, "")
+
+
+def test_generate_video_sends_the_start_image(local_settings):
+    calls = []
+    clip = base64.b64encode(b"mp4").decode()
+    response = _Response(200, {"data": [{"b64_mp4": clip, "seconds": 3.04}]})
+    with (
+        patch.object(local_ai, "ensure_server", return_value={"ok": True}),
+        _patch_session(response, calls),
+    ):
+        assert local_ai.generate_video("waves", b"png", "1024x1536") == (b"mp4", 3.04)
+    assert calls[0]["url"].endswith("/v1/videos/generations")
+    assert calls[0]["json"] == {
+        "model": "wan2.2-ti2v-5b",
+        "prompt": "waves",
+        "size": "1024x1536",
+        "image": base64.b64encode(b"png").decode(),
+    }
+
+
+def _local_video_flow(tmp_path, terms, duration=6, max_clip=5):
+    return material._download_videos_local_video_on_demand(
+        task_id="local-video-task",
+        search_terms=terms,
+        video_aspect=VideoAspect.portrait,
+        audio_duration=duration,
+        max_clip_duration=max_clip,
+        material_directory=str(tmp_path),
+    )
+
+
+def test_local_video_animates_scene_images_until_the_audio_is_covered(local_settings, tmp_path):
+    prompts = []
+
+    def fake_video(prompt, image, size):
+        prompts.append((prompt, image is not None, size))
+        return b"clip", 3.0
+
+    with (
+        patch.object(local_ai, "generate_image", return_value=_png_bytes()),
+        patch.object(local_ai, "generate_video", side_effect=fake_video),
+        patch.object(material, "_persist_material_sources") as persist,
+    ):
+        paths = _local_video_flow(tmp_path, ["lake", "library", "street", "forest"])
+    # 两个 3 秒片段即覆盖 6 秒配音，不再为后续画面生成。
+    assert prompts == [("lake", True, "1024x1536"), ("library", True, "1024x1536")]
+    assert len(paths) == 2
+    assert all(open(path, "rb").read() == b"clip" for path in paths)
+    sources = persist.call_args.args[1]
+    assert [source["provider"] for source in sources] == ["local_video", "local_video"]
+
+
+def test_failed_clip_falls_back_to_the_scene_image(local_settings, tmp_path):
+    with (
+        patch.object(local_ai, "generate_image", return_value=_png_bytes()),
+        patch.object(local_ai, "generate_video", side_effect=local_ai.LocalAIError("out of memory")),
+        patch.object(material, "_render_openai_image_video", return_value="zoom.mp4") as render,
+        patch.object(material, "_persist_material_sources"),
+    ):
+        paths = _local_video_flow(tmp_path, ["lake", "library"], duration=5)
+    assert paths == ["zoom.mp4"]
+    render.assert_called_once()
+
+
+def test_text_to_video_model_fails_the_task_without_a_fallback(local_settings, tmp_path):
+    local_settings.settings["local_ai_video_model"] = "wan2.1-t2v-1.3b"
+    with (
+        patch.object(local_ai, "generate_image") as generate_image,
+        patch.object(local_ai, "generate_video", side_effect=local_ai.LocalAIError("server exited")),
+        patch.object(material, "_persist_material_sources"),
+        pytest.raises(material.LocalImageMaterialError, match="server exited"),
+    ):
+        _local_video_flow(tmp_path, ["lake"])
+    generate_image.assert_not_called()
+
+
+def test_download_videos_routes_local_video(local_settings):
+    with patch.object(material, "_download_videos_local_video_on_demand", return_value=["c.mp4"]) as flow:
+        assert material.download_videos(
+            task_id="t", search_terms=["lake"], source="local_video",
+            video_aspect=VideoAspect.portrait, audio_duration=5, max_clip_duration=5,
+        ) == ["c.mp4"]
+    assert flow.call_args.kwargs["search_terms"] == ["lake"]
+
+
+def test_task_preflight_checks_video_models_for_local_video(local_settings):
+    _install_runtime(local_settings.tmp_path / "runtime")
+    _install("realvisxl-v5-lightning", local_settings.settings["local_ai_models_dir"])
+    params = VideoParams(video_subject="Local video", video_source="local_video")
+    with (
+        patch.object(task_service.sm, "state", sm.MemoryState()),
+        patch.object(task_service, "generate_script") as generate_script,
+    ):
+        result = task_service.start("local-video-preflight", params, stop_at="materials")
+    assert result["failed_stage"] == "preflight"
+    assert "not downloaded" in result["error"]
     generate_script.assert_not_called()

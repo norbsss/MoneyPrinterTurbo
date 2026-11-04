@@ -37,12 +37,25 @@ class Model:
     steps: int
     guidance: float
     notes: str = ""
+    # Video models only: output frame rate, frames per clip, and whether the
+    # model animates a start image (the scene's generated image) or text only.
+    fps: int = 0
+    frames: int = 0
+    image_to_video: bool = False
+    # Components loaded in 4-bit (bitsandbytes NF4): the memory figures above
+    # assume it. Wan's T5 text encoder alone is 11 GB in bf16.
+    quantize: tuple[str, ...] = ()
+    # Components rewritten on first load as bfloat16 shards of at most 1 GB:
+    # less disk, and loading never needs a whole multi-GB shard in memory.
+    bf16: tuple[str, ...] = ()
 
     @classmethod
     def from_dict(cls, data: dict) -> "Model":
         fields = dict(data)
         fields["allow_patterns"] = tuple(fields.get("allow_patterns") or ())
         fields["ignore_patterns"] = tuple(fields.get("ignore_patterns") or ())
+        fields["quantize"] = tuple(fields.get("quantize") or ())
+        fields["bf16"] = tuple(fields.get("bf16") or ())
         return cls(**fields)
 
 

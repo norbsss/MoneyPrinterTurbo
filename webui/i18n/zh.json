@@ -776,7 +776,6 @@
     "local_ai.runtime.installing": "正在安装运行环境，需要数分钟；期间可以继续使用。",
     "local_ai.runtime.installed": "运行环境已安装。",
     "local_ai.runtime.failed": "运行环境安装失败",
-    "local_ai.models": "模型",
     "local_ai.models.folder": "模型文件夹",
     "local_ai.model.recommended": "推荐用于此电脑",
     "local_ai.model.license": "许可证",
@@ -800,6 +799,10 @@
     "local_ai.hf_token.help": "仅受限模型（如 FLUX.1 schnell）需要。请先在 Hugging Face 上同意该模型的条款。",
     "local_ai.runtime_missing": "请先在 设置 > AI 图片 > 本机 AI 中安装运行环境。",
     "local_ai.model_missing": "请先在 设置 > AI 图片 > 本机 AI 中下载所选的本机生图模型。",
-    "local_ai.no_model_fits": "没有适合此电脑显卡或内存的本机生图模型。"
+    "local_ai.no_model_fits": "没有适合此电脑显卡或内存的本机生图模型。",
+    "local_ai.video.label": "本机 AI 视频（此电脑）",
+    "local_ai.video.help": "使用本机显卡为每个画面生成动画：先由本机生图模型画出画面，再由视频模型做成短片段。免费且私密，但每个片段需要数分钟。某个片段失败时，该画面改用图片加缓慢缩放。",
+    "local_ai.models.image": "生图模型",
+    "local_ai.models.video": "视频模型"
   }
 }

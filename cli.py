@@ -51,6 +51,7 @@ _CLI_VIDEO_SOURCES = (
     "openai_image",
     "codex_image",
     "local_image",
+    "local_video",
     "local",
 )
 

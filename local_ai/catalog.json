@@ -15,12 +15,19 @@
       "vram_offload_gb": 24,
       "ram_offload_gb": 32,
       "cpu": false,
-      "allow_patterns": ["*.json", "*.txt", "*.model", "*/*.safetensors"],
+      "allow_patterns": [
+        "*.json",
+        "*.txt",
+        "*.model",
+        "*/*.safetensors"
+      ],
       "ignore_patterns": [],
       "variant": null,
       "steps": 4,
       "guidance": 0.0,
-      "notes": "Best prompt following. Gated on Hugging Face: accept the terms on the model page and set a Hugging Face token."
+      "notes": "Best prompt following. Gated on Hugging Face: accept the terms on the model page and set a Hugging Face token.",
+      "quantize": [],
+      "bf16": []
     },
     {
       "id": "realvisxl-v5-lightning",
@@ -36,12 +43,18 @@
       "vram_offload_gb": 6,
       "ram_offload_gb": 16,
       "cpu": false,
-      "allow_patterns": ["*.json", "*.txt", "*/*.fp16.safetensors"],
+      "allow_patterns": [
+        "*.json",
+        "*.txt",
+        "*/*.fp16.safetensors"
+      ],
       "ignore_patterns": [],
       "variant": "fp16",
       "steps": 6,
       "guidance": 1.5,
-      "notes": "Photoreal SDXL in 6 steps. About 4 seconds per image on a 16 GB card."
+      "notes": "Photoreal SDXL in 6 steps. About 4 seconds per image on a 16 GB card.",
+      "quantize": [],
+      "bf16": []
     },
     {
       "id": "dreamshaper-8",
@@ -57,12 +70,92 @@
       "vram_offload_gb": 3,
       "ram_offload_gb": 8,
       "cpu": true,
-      "allow_patterns": ["*.json", "*.txt", "*/*.fp16.safetensors"],
-      "ignore_patterns": ["safety_checker/*", "feature_extractor/*"],
+      "allow_patterns": [
+        "*.json",
+        "*.txt",
+        "*/*.fp16.safetensors"
+      ],
+      "ignore_patterns": [
+        "safety_checker/*",
+        "feature_extractor/*"
+      ],
       "variant": "fp16",
       "steps": 25,
       "guidance": 6.0,
-      "notes": "Small and fast. Runs on older cards and, slowly, on the CPU."
+      "notes": "Small and fast. Runs on older cards and, slowly, on the CPU.",
+      "quantize": [],
+      "bf16": []
+    },
+    {
+      "id": "wan2.2-ti2v-5b",
+      "kind": "video",
+      "name": "Wan 2.2 TI2V 5B",
+      "repo": "Wan-AI/Wan2.2-TI2V-5B-Diffusers",
+      "family": "wan22",
+      "license": "apache-2.0",
+      "gated": false,
+      "download_gb": 34.2,
+      "quality": 3,
+      "vram_gpu_gb": 14,
+      "vram_offload_gb": 8,
+      "ram_offload_gb": 16,
+      "cpu": false,
+      "allow_patterns": [
+        "*.json",
+        "*.model",
+        "*/*.safetensors"
+      ],
+      "ignore_patterns": [],
+      "variant": null,
+      "steps": 30,
+      "guidance": 5.0,
+      "fps": 24,
+      "frames": 73,
+      "image_to_video": true,
+      "notes": "Animates each scene's image into a 3-second clip. Loaded in 4-bit to fit 16 GB cards and ordinary RAM. About 2 minutes per clip on an RTX 4070 Ti SUPER.",
+      "quantize": [
+        "transformer",
+        "text_encoder"
+      ],
+      "bf16": [
+        "transformer",
+        "text_encoder"
+      ]
+    },
+    {
+      "id": "wan2.1-t2v-1.3b",
+      "kind": "video",
+      "name": "Wan 2.1 T2V 1.3B",
+      "repo": "Wan-AI/Wan2.1-T2V-1.3B-Diffusers",
+      "family": "wan21",
+      "license": "apache-2.0",
+      "gated": false,
+      "download_gb": 28.9,
+      "quality": 2,
+      "vram_gpu_gb": 10,
+      "vram_offload_gb": 6,
+      "ram_offload_gb": 12,
+      "cpu": false,
+      "allow_patterns": [
+        "*.json",
+        "*.model",
+        "*/*.safetensors"
+      ],
+      "ignore_patterns": [],
+      "variant": null,
+      "steps": 30,
+      "guidance": 5.0,
+      "fps": 16,
+      "frames": 49,
+      "image_to_video": false,
+      "notes": "Small text-to-video model for 8 GB cards. Clips follow the scene text, not its image.",
+      "quantize": [
+        "text_encoder"
+      ],
+      "bf16": [
+        "transformer",
+        "text_encoder"
+      ]
     }
   ]
 }

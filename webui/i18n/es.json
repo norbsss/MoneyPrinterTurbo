@@ -521,7 +521,6 @@
     "local_ai.runtime.installing": "Instalando el entorno. Tarda varios minutos; puedes seguir usando la aplicación.",
     "local_ai.runtime.installed": "Entorno instalado.",
     "local_ai.runtime.failed": "Falló la instalación del entorno",
-    "local_ai.models": "Modelos",
     "local_ai.models.folder": "Carpeta de modelos",
     "local_ai.model.recommended": "Recomendado para este ordenador",
     "local_ai.model.license": "Licencia",
@@ -545,6 +544,10 @@
     "local_ai.hf_token.help": "Solo hace falta para modelos con acceso restringido como FLUX.1 schnell. Acepta primero los términos del modelo en Hugging Face.",
     "local_ai.runtime_missing": "Instala primero el entorno de IA local en Ajustes > Imagen IA > IA local.",
     "local_ai.model_missing": "Descarga primero el modelo de imagen local seleccionado en Ajustes > Imagen IA > IA local.",
-    "local_ai.no_model_fits": "Ningún modelo de imagen local cabe en la tarjeta gráfica o la memoria de este ordenador."
+    "local_ai.no_model_fits": "Ningún modelo de imagen local cabe en la tarjeta gráfica o la memoria de este ordenador.",
+    "local_ai.video.label": "Vídeo con IA local (este ordenador)",
+    "local_ai.video.help": "Anima cada escena con la tarjeta gráfica de este ordenador: el modelo de imagen local pinta la escena y el modelo de vídeo la convierte en un clip corto. Gratis y privado, pero cada clip tarda minutos. Si un clip falla, esa escena usa su imagen con un zoom lento.",
+    "local_ai.models.image": "Modelos de imagen",
+    "local_ai.models.video": "Modelos de vídeo"
   }
 }

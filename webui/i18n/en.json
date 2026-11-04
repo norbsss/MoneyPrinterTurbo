@@ -776,7 +776,6 @@
     "local_ai.runtime.installing": "Installing the runtime. This takes several minutes; you can keep using the app.",
     "local_ai.runtime.installed": "Runtime installed.",
     "local_ai.runtime.failed": "Runtime install failed",
-    "local_ai.models": "Models",
     "local_ai.models.folder": "Models folder",
     "local_ai.model.recommended": "Recommended for this computer",
     "local_ai.model.license": "License",
@@ -800,6 +799,10 @@
     "local_ai.hf_token.help": "Only needed for gated models such as FLUX.1 schnell. Accept the model's terms on Hugging Face first.",
     "local_ai.runtime_missing": "Install the local AI runtime in Settings > AI Image > Local AI first.",
     "local_ai.model_missing": "Download the selected local image model in Settings > AI Image > Local AI first.",
-    "local_ai.no_model_fits": "No local image model fits this computer's GPU or memory."
+    "local_ai.no_model_fits": "No local image model fits this computer's GPU or memory.",
+    "local_ai.video.label": "Local AI video (this computer)",
+    "local_ai.video.help": "Animates each scene on this computer's GPU: the local image model paints the scene, then the video model turns it into a short clip. Free and private, but each clip takes minutes. If a clip fails, that scene uses its image with a slow zoom.",
+    "local_ai.models.image": "Image models",
+    "local_ai.models.video": "Video models"
   }
 }

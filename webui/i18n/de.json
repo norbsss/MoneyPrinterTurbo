@@ -521,7 +521,6 @@
     "local_ai.runtime.installing": "Die Laufzeitumgebung wird installiert. Das dauert einige Minuten; Sie können die App weiter verwenden.",
     "local_ai.runtime.installed": "Laufzeitumgebung installiert.",
     "local_ai.runtime.failed": "Installation der Laufzeitumgebung fehlgeschlagen",
-    "local_ai.models": "Modelle",
     "local_ai.models.folder": "Modellordner",
     "local_ai.model.recommended": "Empfohlen für diesen Computer",
     "local_ai.model.license": "Lizenz",
@@ -545,6 +544,10 @@
     "local_ai.hf_token.help": "Nur für zugangsbeschränkte Modelle wie FLUX.1 schnell nötig. Akzeptieren Sie zuerst die Bedingungen des Modells auf Hugging Face.",
     "local_ai.runtime_missing": "Installieren Sie zuerst die lokale KI-Laufzeitumgebung unter Einstellungen > KI-Bild > Lokale KI.",
     "local_ai.model_missing": "Laden Sie zuerst das ausgewählte lokale Bildmodell unter Einstellungen > KI-Bild > Lokale KI herunter.",
-    "local_ai.no_model_fits": "Kein lokales Bildmodell passt zur Grafikkarte oder zum Arbeitsspeicher dieses Computers."
+    "local_ai.no_model_fits": "Kein lokales Bildmodell passt zur Grafikkarte oder zum Arbeitsspeicher dieses Computers.",
+    "local_ai.video.label": "Lokales KI-Video (dieser Computer)",
+    "local_ai.video.help": "Animiert jede Szene auf der Grafikkarte dieses Computers: Das lokale Bildmodell malt die Szene, dann macht das Videomodell daraus einen kurzen Clip. Kostenlos und privat, aber jeder Clip dauert Minuten. Schlägt ein Clip fehl, zeigt diese Szene ihr Bild mit langsamem Zoom.",
+    "local_ai.models.image": "Bildmodelle",
+    "local_ai.models.video": "Videomodelle"
   }
 }

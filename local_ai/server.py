@@ -1,20 +1,26 @@
-"""OpenAI-compatible /v1/images/generations server for downloaded catalog models.
+"""OpenAI-compatible image server, plus clip generation, for downloaded catalog models.
 
 MoneyPrinterTurbo starts it in its own Python environment (see runtime.py). It
 can also run by hand: ``python -m local_ai.server`` from the project root.
 
-The GPU is shared with Ollama, whose script model may not fit beside an image
-model. Before every image the server asks Ollama to unload its models, and an
-idle model moves back to the CPU so Ollama gets the whole GPU for the next
+One image model and one video model can be loaded at a time, but only one of
+them sits on the GPU: a scene first gets its image, then the clip animates it.
+
+The GPU is shared with Ollama, whose script model may not fit beside these
+models. Before every request the server asks Ollama to unload its models, and
+an idle model moves back to the CPU so Ollama gets the whole GPU for the next
 script. This is the scheme from docs/local-image-server, made model-agnostic.
 """
 
 import base64
+import binascii
+import gc
 import io
 import os
 import threading
 import time
 from contextlib import asynccontextmanager
+from dataclasses import dataclass
 
 import requests
 import uvicorn
@@ -26,7 +32,10 @@ from local_ai import catalog, hardware, models, pipelines
 HOST = os.environ.get("LOCAL_AI_HOST", "127.0.0.1")
 PORT = int(os.environ.get("LOCAL_AI_PORT", "7862"))
 MODELS_DIR = os.environ.get("LOCAL_AI_MODELS_DIR", os.path.join("storage", "local_ai", "models"))
-DEFAULT_MODEL = os.environ.get("LOCAL_AI_IMAGE_MODEL", "")
+DEFAULT_MODELS = {
+    "image": os.environ.get("LOCAL_AI_IMAGE_MODEL", ""),
+    "video": os.environ.get("LOCAL_AI_VIDEO_MODEL", ""),
+}
 # Index in nvidia-smi numbering; the app also sets CUDA_VISIBLE_DEVICES to it.
 GPU_INDEX = os.environ.get("LOCAL_AI_GPU_INDEX", "")
 OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://localhost:11434")
@@ -43,14 +52,27 @@ NEGATIVE = os.environ.get(
     "text, letters, words, watermark, logo, signature, caption, deformed, "
     "distorted, bad anatomy, extra fingers, blurry, lowres",
 )
+VIDEO_NEGATIVE = os.environ.get(
+    "LOCAL_AI_VIDEO_NEGATIVE",
+    "text, subtitles, watermark, logo, static frame, still picture, blurry, "
+    "low quality, jpeg artifacts, deformed, distorted, extra limbs, flickering",
+)
 MAX_IMAGES_PER_REQUEST = 4
 
-# One lock guards the pipeline and the state below: one image at a time per GPU.
+
+@dataclass
+class Slot:
+    """The pipeline loaded for one kind of model."""
+
+    model: catalog.Model | None = None
+    pipe: object = None
+    mode: str = ""
+    on_gpu: bool = False
+
+
+# One lock guards the slots: one request at a time per GPU.
 lock = threading.Lock()
-pipe = None
-loaded_model: catalog.Model | None = None
-mode = ""
-on_gpu = False
+slots = {"image": Slot(), "video": Slot()}
 last_used = 0.0
 stop_idle = threading.Event()
 idle_thread = None
@@ -62,6 +84,14 @@ class ImageRequest(BaseModel):
     n: int = 1
     size: str | None = None
     response_format: str | None = "b64_json"
+
+
+class VideoRequest(BaseModel):
+    prompt: str
+    model: str | None = None
+    size: str | None = None
+    # Base64 PNG or JPEG start frame; required by image-to-video models.
+    image: str | None = None
 
 
 def _hardware_for_server() -> hardware.Hardware:
@@ -80,7 +110,7 @@ def ollama_models() -> list[str]:
 
 
 def unload_ollama() -> list[str]:
-    # Ollama can load again between requests, so this runs before every image.
+    # Ollama can load again between requests, so this runs before every one.
     names = ollama_models()
     for name in names:
         try:
@@ -97,59 +127,96 @@ def unload_ollama() -> list[str]:
     while (left := ollama_models()) and time.time() < deadline:
         time.sleep(0.5)
     if left:
-        print(f"ollama still holds {', '.join(left)} after {OLLAMA_UNLOAD_TIMEOUT:g}s, painting anyway")
+        print(f"ollama still holds {', '.join(left)} after {OLLAMA_UNLOAD_TIMEOUT:g}s, continuing anyway")
     return names
 
 
-def resolve_model(model_id: str | None) -> tuple[catalog.Model, str]:
+def resolve_model(kind: str, model_id: str | None) -> tuple[catalog.Model, str]:
     """The catalog entry and local folder for a request; HTTP errors for the client."""
-    model_id = (model_id or DEFAULT_MODEL or "").strip()
+    model_id = (model_id or DEFAULT_MODELS[kind] or "").strip()
     if not model_id:
-        raise HTTPException(400, "no model requested and LOCAL_AI_IMAGE_MODEL is not set")
+        raise HTTPException(400, f"no {kind} model requested and no default is set")
     model = catalog.get(model_id)
-    if model is None or model.kind != "image":
-        raise HTTPException(404, f"unknown image model {model_id!r}")
+    if model is None or model.kind != kind:
+        raise HTTPException(404, f"unknown {kind} model {model_id!r}")
     path = models.installed_path(model, MODELS_DIR)
     if path is None:
         raise HTTPException(409, f"model {model_id!r} is not downloaded")
     return model, path
 
 
-def claim(model: catalog.Model, path: str):
-    """Make ``model`` the loaded pipeline, on the GPU when it fits. Call with the lock held."""
-    global pipe, loaded_model, mode, on_gpu
-    if loaded_model is None or loaded_model.id != model.id:
-        pipe = None
-        loaded_model = None
-        pipelines.empty_cache()
-        mode = catalog.fit(model, _hardware_for_server()).mode
-        if mode == catalog.FIT_NONE:
+def _unload(slot: Slot) -> None:
+    slot.pipe, slot.model, slot.mode, slot.on_gpu = None, None, "", False
+    # Large pipelines hold reference cycles; collect now so their memory is
+    # free before the next model loads, not whenever Python next collects.
+    gc.collect()
+    pipelines.empty_cache()
+
+
+def _move_to_cpu(slot: Slot) -> None:
+    """Free the GPU. 4-bit (bitsandbytes) weights cannot move, so they unload."""
+    if not slot.on_gpu:
+        return
+    if slot.model is not None and slot.model.quantize:
+        _unload(slot)
+        return
+    slot.pipe.to("cpu")
+    slot.on_gpu = False
+    pipelines.empty_cache()
+
+
+def claim(kind: str, model: catalog.Model, path: str):
+    """Make ``model`` the loaded pipeline of its kind and give it the GPU.
+
+    Call with the lock held. The other kind's model leaves the GPU first, and
+    before loading a new model it unloads completely: a video model needs most
+    of an ordinary computer's free memory while it loads.
+    """
+    slot = slots[kind]
+    loading = slot.model is None or slot.model.id != model.id
+    for other_kind, other in slots.items():
+        if other_kind == kind:
+            continue
+        if loading:
+            _unload(other)
+        else:
+            _move_to_cpu(other)
+    if loading:
+        _unload(slot)
+        slot.mode = catalog.fit(model, _hardware_for_server()).mode
+        if slot.mode == catalog.FIT_NONE:
             raise HTTPException(507, f"{model.name} does not fit this machine's GPU or memory")
-        print(f"loading {model.id} ({mode})")
-        pipe = pipelines.load(model, path, mode)
-        loaded_model = model
-        on_gpu = False
-    if mode == catalog.FIT_GPU:
+        print(f"loading {model.id} ({slot.mode})")
+        loader = pipelines.load_video if kind == "video" else pipelines.load
+        try:
+            slot.pipe = loader(model, path, slot.mode)
+        except (MemoryError, OSError) as error:
+            # A half-loaded model would keep its memory and block the next try.
+            _unload(slot)
+            raise HTTPException(
+                507, f"not enough memory to load {model.name}: {error}"
+            ) from error
+        slot.model = model
+    if slot.mode == catalog.FIT_GPU:
         unload_ollama()
-        if not on_gpu:
-            pipe.to(pipelines.device())
-            on_gpu = True
-    elif mode == catalog.FIT_OFFLOAD:
+        if not slot.on_gpu:
+            slot.pipe.to(pipelines.device())
+            slot.on_gpu = True
+    elif slot.mode == catalog.FIT_OFFLOAD:
         # Offloaded models still peak at their largest part on the GPU.
         unload_ollama()
-    return pipe
+    return slot.pipe
 
 
 def offload_if_idle() -> bool:
-    """Move an idle model back to the CPU so Ollama has the GPU."""
-    global on_gpu
+    """Move idle models back to the CPU so Ollama has the GPU."""
     with lock:
-        if not on_gpu or time.time() - last_used < IDLE_SECONDS:
+        busy = [slot for slot in slots.values() if slot.on_gpu]
+        if not busy or time.time() - last_used < IDLE_SECONDS:
             return False
-        pipe.to("cpu")
-        pipelines.empty_cache()
-        on_gpu = False
-    print("idle: moved pipeline to cpu")
+        for slot in busy:
+            _move_to_cpu(slot)
+    print("idle: moved pipelines to cpu")
     return True
 
 
@@ -176,22 +243,26 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get("/health")
 def health():
+    image, video = slots["image"], slots["video"]
     return {
         "ok": True,
-        "model": loaded_model.id if loaded_model else None,
-        "mode": mode or None,
-        "on_gpu": on_gpu,
+        "model": image.model.id if image.model else None,
+        "mode": image.mode or None,
+        "on_gpu": image.on_gpu,
+        "video_model": video.model.id if video.model else None,
+        "video_mode": video.mode or None,
+        "video_on_gpu": video.on_gpu,
         "pid": os.getpid(),
     }
 
 
 @app.get("/v1/models")
 def list_models():
-    installed = [
-        model for model in catalog.load()
-        if model.kind == "image" and models.installed_path(model, MODELS_DIR)
-    ]
-    return {"object": "list", "data": [{"id": model.id, "object": "model"} for model in installed]}
+    installed = [model for model in catalog.load() if models.installed_path(model, MODELS_DIR)]
+    return {
+        "object": "list",
+        "data": [{"id": model.id, "object": "model", "kind": model.kind} for model in installed],
+    }
 
 
 @app.post("/v1/images/generations")
@@ -199,7 +270,7 @@ def generate(req: ImageRequest):
     global last_used
     if not req.prompt.strip():
         raise HTTPException(400, "prompt is empty")
-    model, path = resolve_model(req.model)
+    model, path = resolve_model("image", req.model)
     width, height = pipelines.pick_size(model.family, req.size)
     prompt = f"{req.prompt.strip()}, {STYLE}" if STYLE else req.prompt.strip()
     data = []
@@ -207,7 +278,7 @@ def generate(req: ImageRequest):
         try:
             for _ in range(max(1, min(req.n, MAX_IMAGES_PER_REQUEST))):
                 # Reclaim per image: Ollama may have loaded while the last one painted.
-                current = claim(model, path)
+                current = claim("image", model, path)
                 image = pipelines.paint(current, model, prompt, NEGATIVE, width, height)
                 buffer = io.BytesIO()
                 image.save(buffer, format="PNG")
@@ -217,6 +288,47 @@ def generate(req: ImageRequest):
             pipelines.empty_cache()
             last_used = time.time()
     return {"created": int(time.time()), "data": data}
+
+
+def _decode_image(encoded: str | None):
+    if not encoded:
+        return None
+    from PIL import Image, UnidentifiedImageError
+
+    try:
+        return Image.open(io.BytesIO(base64.b64decode(encoded, validate=True))).convert("RGB")
+    except (binascii.Error, ValueError, UnidentifiedImageError) as error:
+        raise HTTPException(400, f"image is not a base64 PNG or JPEG: {error}") from error
+
+
+@app.post("/v1/videos/generations")
+def generate_video(req: VideoRequest):
+    global last_used
+    if not req.prompt.strip():
+        raise HTTPException(400, "prompt is empty")
+    model, path = resolve_model("video", req.model)
+    image = _decode_image(req.image)
+    if model.image_to_video and image is None:
+        raise HTTPException(400, f"{model.name} animates a start image: send it as image")
+    width, height = pipelines.pick_video_size(model.family, req.size)
+    with lock:
+        try:
+            current = claim("video", model, path)
+            clip = pipelines.animate(
+                current, model, req.prompt.strip(), VIDEO_NEGATIVE, width, height, image
+            )
+        finally:
+            pipelines.empty_cache()
+            last_used = time.time()
+    return {
+        "created": int(time.time()),
+        "data": [{
+            "b64_mp4": base64.b64encode(clip).decode(),
+            "seconds": round(model.frames / model.fps, 2),
+            "width": width,
+            "height": height,
+        }],
+    }
 
 
 if __name__ == "__main__":

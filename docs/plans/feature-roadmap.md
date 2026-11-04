@@ -62,7 +62,7 @@ Add both to the source list in `task.py:103` and the `stop_at` branches around `
 ### Phases
 1. Move sidecar into `local_ai/`, add `hardware.py`, `/hardware` + `/models` endpoints, managed start from the app. Ship `local_image` with the existing SDXL model. **Done 2026-11-04**, except a `/hardware` endpoint: the app detects hardware itself, before the runtime exists.
 2. Catalog + downloader + model picker UI; add FLUX tier. **Done 2026-11-04**: catalog has FLUX.1 schnell (gated), RealVisXL V5 Lightning and DreamShaper 8; downloads go to plain folders because the Hugging Face cache needs symlinks that Windows refuses without Developer Mode.
-3. `local_video` with one model family (LTX-Video first: fastest on 12–16 GB), keyframe → I2V, per-scene fallback.
+3. `local_video` with one model family (LTX-Video first: fastest on 12–16 GB), keyframe → I2V, per-scene fallback. **Done 2026-11-04 with Wan 2.2 TI2V 5B instead** (Apache-2.0; LTX-Video has a custom license and 48–93 GB repos). Loaded in 4-bit NF4 (bitsandbytes) and resharded on first load into 1 GB bf16 files, because loading 5 GB fp32 shards failed with Windows os error 1455 when WSL held most of the commit limit. About 2 minutes per 3 s 480p clip on an RTX 4070 Ti SUPER, so a 50 s video takes roughly 40 minutes; Wan 2.1 T2V 1.3B covers 8 GB cards.
 4. Second video family (Wan), multi-GPU scheduling, Docker image.
 
 ### Risks

@@ -521,7 +521,6 @@
     "local_ai.runtime.installing": "Memasang runtime. Butuh beberapa menit; Anda tetap bisa memakai aplikasi.",
     "local_ai.runtime.installed": "Runtime terpasang.",
     "local_ai.runtime.failed": "Pemasangan runtime gagal",
-    "local_ai.models": "Model",
     "local_ai.models.folder": "Folder model",
     "local_ai.model.recommended": "Disarankan untuk komputer ini",
     "local_ai.model.license": "Lisensi",
@@ -545,6 +544,10 @@
     "local_ai.hf_token.help": "Hanya diperlukan untuk model berakses terbatas seperti FLUX.1 schnell. Setujui dulu ketentuan model di Hugging Face.",
     "local_ai.runtime_missing": "Pasang dulu runtime AI lokal di Pengaturan > Gambar AI > AI lokal.",
     "local_ai.model_missing": "Unduh dulu model gambar lokal yang dipilih di Pengaturan > Gambar AI > AI lokal.",
-    "local_ai.no_model_fits": "Tidak ada model gambar lokal yang cocok dengan kartu grafis atau memori komputer ini."
+    "local_ai.no_model_fits": "Tidak ada model gambar lokal yang cocok dengan kartu grafis atau memori komputer ini.",
+    "local_ai.video.label": "Video AI lokal (komputer ini)",
+    "local_ai.video.help": "Menganimasikan setiap adegan dengan kartu grafis komputer ini: model gambar lokal melukis adegan, lalu model video mengubahnya menjadi klip pendek. Gratis dan privat, tetapi setiap klip butuh beberapa menit. Jika satu klip gagal, adegan itu memakai gambarnya dengan zoom perlahan.",
+    "local_ai.models.image": "Model gambar",
+    "local_ai.models.video": "Model video"
   }
 }

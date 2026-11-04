@@ -521,7 +521,6 @@
     "local_ai.runtime.installing": "İcra mühiti quraşdırılır. Bir neçə dəqiqə çəkir; tətbiqdən istifadəyə davam edə bilərsiniz.",
     "local_ai.runtime.installed": "İcra mühiti quraşdırıldı.",
     "local_ai.runtime.failed": "İcra mühitini quraşdırmaq alınmadı",
-    "local_ai.models": "Modellər",
     "local_ai.models.folder": "Model qovluğu",
     "local_ai.model.recommended": "Bu kompüter üçün tövsiyə olunur",
     "local_ai.model.license": "Lisenziya",
@@ -545,6 +544,10 @@
     "local_ai.hf_token.help": "Yalnız FLUX.1 schnell kimi girişi məhdud modellər üçün lazımdır. Əvvəlcə Hugging Face-də modelin şərtlərini qəbul edin.",
     "local_ai.runtime_missing": "Əvvəlcə Parametrlər > Sİ şəkil > Lokal süni intellekt bölməsində icra mühitini quraşdırın.",
     "local_ai.model_missing": "Əvvəlcə Parametrlər > Sİ şəkil > Lokal süni intellekt bölməsində seçilmiş lokal şəkil modelini yükləyin.",
-    "local_ai.no_model_fits": "Bu kompüterin videokartına və ya yaddaşına uyğun lokal şəkil modeli yoxdur."
+    "local_ai.no_model_fits": "Bu kompüterin videokartına və ya yaddaşına uyğun lokal şəkil modeli yoxdur.",
+    "local_ai.video.label": "Lokal Sİ videosu (bu kompüter)",
+    "local_ai.video.help": "Hər səhnəni bu kompüterin videokartında canlandırır: lokal şəkil modeli səhnəni çəkir, sonra video modeli onu qısa klipə çevirir. Pulsuz və məxfi, amma hər klip dəqiqələr çəkir. Klip alınmasa, həmin səhnə öz şəklini yavaş yaxınlaşdırma ilə istifadə edir.",
+    "local_ai.models.image": "Şəkil modelləri",
+    "local_ai.models.video": "Video modelləri"
   }
 }

@@ -43,6 +43,7 @@ SUPPORTED_SOURCES = {
     "openai_image",
     "codex_image",
     "local_image",
+    "local_video",
     "local",
 }
 VOLCENGINE_ARK_API_KEY_URL = (

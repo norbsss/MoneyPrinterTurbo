@@ -103,7 +103,8 @@ _VIDEO_MUSIC_PROVIDERS = {
 _SUPPORTED_VIDEO_SOURCES = frozenset({
     "pexels", "pixabay", "coverr", "local", "wavespeed",
     "volcengine_seedance", "ofox", "metaso_minimax", "muapi",
-    "loomloom", "openai_image", "codex_image", "local_image", "infistar", "jalapeno",
+    "loomloom", "openai_image", "codex_image", "local_image", "local_video",
+    "infistar", "jalapeno",
 })
 
 
@@ -1672,19 +1673,24 @@ def _run_pipeline(
             "optional for local gateways that need no auth)",
         )
 
-    if stop_at in {"materials", "video"} and params.video_source == "local_image":
-        ready, reason = local_ai.readiness()
+    if stop_at in {"materials", "video"} and params.video_source in {
+        "local_image",
+        "local_video",
+    }:
+        ready, reason = local_ai.readiness(
+            "video" if params.video_source == "local_video" else "image"
+        )
         if not ready:
             return _mark_task_failed(
                 task_id,
                 "preflight",
                 {
-                    "local_ai.runtime_missing": "Local AI images need the local AI runtime: "
-                    "install it in Settings > AI Image > Local AI",
-                    "local_ai.model_missing": "The selected local image model is not "
-                    "downloaded: download it in Settings > AI Image > Local AI",
-                    "local_ai.no_model_fits": "No local image model fits this computer's "
-                    "GPU or memory",
+                    "local_ai.runtime_missing": "Local AI needs its runtime: install it "
+                    "in Settings > AI Image > Local AI",
+                    "local_ai.model_missing": "A selected local model is not downloaded: "
+                    "download it in Settings > AI Image > Local AI",
+                    "local_ai.no_model_fits": "No local model fits this computer's GPU "
+                    "or memory",
                 }.get(reason, reason),
             )
 

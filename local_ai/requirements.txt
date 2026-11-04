@@ -7,6 +7,12 @@ safetensors
 huggingface_hub>=1.0
 sentencepiece
 protobuf
+# video models: Wan cleans prompts with ftfy; clips are written with imageio's ffmpeg
+ftfy
+imageio
+imageio-ffmpeg
+# 4-bit loading of large video models (Windows wheels since 0.43)
+bitsandbytes>=0.45
 fastapi
 uvicorn
 pillow

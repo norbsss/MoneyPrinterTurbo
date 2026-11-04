@@ -104,6 +104,7 @@ def configured_material_providers(settings, groups, codex_connected=False):
             "muapi": muapi.is_enabled(settings),
             "openai_image": material.is_openai_image_enabled(settings),
             "local_image": local_ai.readiness()[0],
+            "local_video": local_ai.readiness("video")[0],
             "codex_image": bool(
                 codex_connected and _text(settings.get("codex_image_model_name"))
             ),

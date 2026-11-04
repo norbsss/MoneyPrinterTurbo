@@ -521,7 +521,6 @@
     "local_ai.runtime.installing": "S'està instal·lant l'entorn. Triga uns quants minuts; pots continuar fent servir l'aplicació.",
     "local_ai.runtime.installed": "Entorn instal·lat.",
     "local_ai.runtime.failed": "Ha fallat la instal·lació de l'entorn",
-    "local_ai.models": "Models",
     "local_ai.models.folder": "Carpeta de models",
     "local_ai.model.recommended": "Recomanat per a aquest ordinador",
     "local_ai.model.license": "Llicència",
@@ -545,6 +544,10 @@
     "local_ai.hf_token.help": "Només cal per a models d'accés restringit com FLUX.1 schnell. Accepta primer les condicions del model a Hugging Face.",
     "local_ai.runtime_missing": "Instal·la primer l'entorn d'IA local a Configuració > Imatge IA > IA local.",
     "local_ai.model_missing": "Baixa primer el model d'imatge local seleccionat a Configuració > Imatge IA > IA local.",
-    "local_ai.no_model_fits": "Cap model d'imatge local no cap a la targeta gràfica o la memòria d'aquest ordinador."
+    "local_ai.no_model_fits": "Cap model d'imatge local no cap a la targeta gràfica o la memòria d'aquest ordinador.",
+    "local_ai.video.label": "Vídeo amb IA local (aquest ordinador)",
+    "local_ai.video.help": "Anima cada escena amb la targeta gràfica d'aquest ordinador: el model d'imatge local pinta l'escena i el model de vídeo la converteix en un clip curt. Gratuït i privat, però cada clip triga minuts. Si un clip falla, aquella escena fa servir la seva imatge amb un zoom lent.",
+    "local_ai.models.image": "Models d'imatge",
+    "local_ai.models.video": "Models de vídeo"
   }
 }

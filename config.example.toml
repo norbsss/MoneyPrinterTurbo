@@ -234,12 +234,15 @@ openai_image_size = ""
 # Example: "cinematic photo of {term}, photorealistic, high detail"
 openai_image_prompt_template = ""
 
-# Local AI image material source ("local_image"): one image per scene on this
+# Local AI material sources ("local_image" and "local_video"): one image per scene on this
 # computer's GPU, free and offline. Set it up in the WebUI under
 # Settings > AI Image > Local AI, which detects the hardware, installs a
 # separate PyTorch runtime and downloads the recommended model.
 # Catalog model id; empty uses the model recommended for this hardware.
 local_ai_image_model = ""
+# Video model for the "local_video" source, which animates each scene's image
+# into a short clip (minutes per clip). Empty uses the recommended model.
+local_ai_video_model = ""
 # Where models are downloaded (several GB each). Empty: storage/local_ai/models.
 local_ai_models_dir = ""
 # Where the PyTorch runtime is installed. Empty: storage/local_ai/runtime.

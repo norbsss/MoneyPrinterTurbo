@@ -4,6 +4,7 @@ The server runs in its own virtual environment so the main app never depends on
 torch, and so a CUDA build of torch can match the installed GPU driver.
 """
 
+import hashlib
 import os
 import shutil
 import subprocess
@@ -45,8 +46,23 @@ def venv_python(runtime_dir: str) -> str:
     return str(Path(runtime_dir) / "venv" / scripts / name)
 
 
+def _requirements_digest() -> str:
+    # Git may check the file out with CRLF or LF; the requirements are the same.
+    text = REQUIREMENTS.read_text(encoding="utf-8").replace("\r\n", "\n")
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 def is_installed(runtime_dir: str) -> bool:
-    return Path(runtime_dir, "venv", ".mpt-installed").is_file()
+    """True when the runtime finished installing the current requirements.
+
+    A runtime from an older release lacks packages newer models need, so it
+    counts as missing and the next install only adds what changed.
+    """
+    try:
+        marker = Path(runtime_dir, "venv", ".mpt-installed").read_text(encoding="utf-8")
+    except OSError:
+        return False
+    return _requirements_digest() in marker.split()
 
 
 def install_commands(runtime_dir: str, hardware: Hardware) -> list[list[str]]:
@@ -84,4 +100,4 @@ def install(runtime_dir: str, hardware: Hardware, log_path: str) -> None:
             result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT, check=False)
             if result.returncode != 0:
                 raise RuntimeError(f"{Path(command[0]).name} exited with {result.returncode}")
-    marker.write_text(torch_index(hardware) or "pypi", encoding="utf-8")
+    marker.write_text(f"{torch_index(hardware) or 'pypi'} {_requirements_digest()}", encoding="utf-8")

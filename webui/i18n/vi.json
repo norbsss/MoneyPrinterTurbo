@@ -521,7 +521,6 @@
     "local_ai.runtime.installing": "Đang cài môi trường chạy. Mất vài phút; bạn vẫn có thể dùng ứng dụng.",
     "local_ai.runtime.installed": "Đã cài môi trường chạy.",
     "local_ai.runtime.failed": "Cài môi trường chạy thất bại",
-    "local_ai.models": "Mô hình",
     "local_ai.models.folder": "Thư mục mô hình",
     "local_ai.model.recommended": "Đề xuất cho máy tính này",
     "local_ai.model.license": "Giấy phép",
@@ -545,6 +544,10 @@
     "local_ai.hf_token.help": "Chỉ cần cho các mô hình bị giới hạn truy cập như FLUX.1 schnell. Hãy đồng ý điều khoản của mô hình trên Hugging Face trước.",
     "local_ai.runtime_missing": "Hãy cài môi trường AI cục bộ trước trong Cài đặt > Ảnh AI > AI cục bộ.",
     "local_ai.model_missing": "Hãy tải mô hình ảnh cục bộ đã chọn trước trong Cài đặt > Ảnh AI > AI cục bộ.",
-    "local_ai.no_model_fits": "Không có mô hình ảnh cục bộ nào phù hợp với card đồ họa hoặc bộ nhớ của máy tính này."
+    "local_ai.no_model_fits": "Không có mô hình ảnh cục bộ nào phù hợp với card đồ họa hoặc bộ nhớ của máy tính này.",
+    "local_ai.video.label": "Video AI cục bộ (máy tính này)",
+    "local_ai.video.help": "Tạo chuyển động cho từng cảnh bằng card đồ họa của máy tính này: mô hình ảnh cục bộ vẽ cảnh, rồi mô hình video biến nó thành một đoạn ngắn. Miễn phí và riêng tư, nhưng mỗi đoạn mất vài phút. Nếu một đoạn thất bại, cảnh đó dùng ảnh của nó với hiệu ứng phóng chậm.",
+    "local_ai.models.image": "Mô hình ảnh",
+    "local_ai.models.video": "Mô hình video"
   }
 }

@@ -521,7 +521,6 @@
     "local_ai.runtime.installing": "Çalışma ortamı kuruluyor. Birkaç dakika sürer; uygulamayı kullanmaya devam edebilirsiniz.",
     "local_ai.runtime.installed": "Çalışma ortamı kuruldu.",
     "local_ai.runtime.failed": "Çalışma ortamı kurulamadı",
-    "local_ai.models": "Modeller",
     "local_ai.models.folder": "Model klasörü",
     "local_ai.model.recommended": "Bu bilgisayar için önerilir",
     "local_ai.model.license": "Lisans",
@@ -545,6 +544,10 @@
     "local_ai.hf_token.help": "Yalnızca FLUX.1 schnell gibi erişimi kısıtlı modeller için gerekir. Önce Hugging Face'te modelin koşullarını kabul edin.",
     "local_ai.runtime_missing": "Önce Ayarlar > Yapay Zekâ Görseli > Yerel yapay zekâ bölümünden çalışma ortamını kurun.",
     "local_ai.model_missing": "Önce Ayarlar > Yapay Zekâ Görseli > Yerel yapay zekâ bölümünden seçili yerel görsel modelini indirin.",
-    "local_ai.no_model_fits": "Bu bilgisayarın ekran kartına veya belleğine uygun yerel görsel modeli yok."
+    "local_ai.no_model_fits": "Bu bilgisayarın ekran kartına veya belleğine uygun yerel görsel modeli yok.",
+    "local_ai.video.label": "Yerel yapay zekâ videosu (bu bilgisayar)",
+    "local_ai.video.help": "Her sahneyi bu bilgisayarın ekran kartında canlandırır: yerel görsel modeli sahneyi çizer, ardından video modeli onu kısa bir klibe dönüştürür. Ücretsiz ve gizli, ancak her klip dakikalar sürer. Bir klip başarısız olursa o sahne kendi görselini yavaş yakınlaştırmayla kullanır.",
+    "local_ai.models.image": "Görsel modelleri",
+    "local_ai.models.video": "Video modelleri"
   }
 }
