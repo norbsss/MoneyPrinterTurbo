@@ -556,6 +556,17 @@
     "upload_post.schedule.queue": "내 Upload-Post 대기열의 다음 빈 시간대",
     "upload_post.schedule.delay": "지정한 시간 후",
     "upload_post.schedule.delay_hours": "대기 시간(시간)",
-    "upload_post.schedule.help": "Upload-Post가 예약 게시물을 저장해 직접 게시하므로 그때 이 컴퓨터는 꺼져 있어도 됩니다. 대기열 시간대는 Upload-Post 대시보드에서 설정하세요."
+    "upload_post.schedule.help": "Upload-Post가 예약 게시물을 저장해 직접 게시하므로 그때 이 컴퓨터는 꺼져 있어도 됩니다. 대기열 시간대는 Upload-Post 대시보드에서 설정하세요.",
+    "library.open": "라이브러리",
+    "library.title": "영상 라이브러리",
+    "library.empty": "완성된 영상이 아직 없습니다. 생성한 영상이 여기에 표시됩니다.",
+    "library.play": "재생",
+    "library.publish.none": "게시 안 됨",
+    "library.publish.pending": "게시 중…",
+    "library.publish.done": "게시됨",
+    "library.publish.scheduled": "{date}에 게시 예약됨",
+    "library.publish.queued": "Upload-Post 대기열에 추가됨",
+    "library.publish.failed": "게시 실패",
+    "library.show_more": "더 보기"
   }
 }

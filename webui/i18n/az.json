@@ -556,6 +556,17 @@
     "upload_post.schedule.queue": "Upload-Post növbəmdə növbəti boş vaxt",
     "upload_post.schedule.delay": "Müəyyən saat sonra",
     "upload_post.schedule.delay_hours": "Gözləmə saatı",
-    "upload_post.schedule.help": "Upload-Post planlaşdırılmış paylaşımları saxlayır və özü dərc edir, ona görə bu kompüter o vaxt sönülü ola bilər. Növbə vaxtlarını Upload-Post panelində qurun."
+    "upload_post.schedule.help": "Upload-Post planlaşdırılmış paylaşımları saxlayır və özü dərc edir, ona görə bu kompüter o vaxt sönülü ola bilər. Növbə vaxtlarını Upload-Post panelində qurun.",
+    "library.open": "Kitabxana",
+    "library.title": "Video kitabxanası",
+    "library.empty": "Hələ hazır video yoxdur. Yaratdığınız videolar burada görünəcək.",
+    "library.play": "Oynat",
+    "library.publish.none": "Dərc edilməyib",
+    "library.publish.pending": "Dərc edilir…",
+    "library.publish.done": "Dərc edildi",
+    "library.publish.scheduled": "{date} üçün planlaşdırılıb",
+    "library.publish.queued": "Upload-Post növbəsinə əlavə edildi",
+    "library.publish.failed": "Dərc etmək alınmadı",
+    "library.show_more": "Daha çox göstər"
   }
 }

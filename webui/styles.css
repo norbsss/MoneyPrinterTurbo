@@ -367,6 +367,9 @@ div[class*="st-key-task_row_"] button[kind="secondary"] {
    单独图标向左偏移。清除该间距并让内容层占满按钮，确保操作图标严格居中。 */
 div[class*="st-key-task_row_"]
     button[kind="secondary"]
+    span[data-has-shortcut],
+div[class*="st-key-library_card_"]
+    button[kind="secondary"]
     span[data-has-shortcut] {
     width: 100% !important;
     gap: 0 !important;
@@ -375,7 +378,8 @@ div[class*="st-key-task_row_"]
 
 /* 行内操作保留可访问的按钮名称，但视觉上只显示图标。使用屏幕阅读器可见的
    隐藏方式，而不是 display:none，确保每个操作仍能被正确朗读。 */
-div[class*="st-key-task_row_"] button[kind="secondary"] p {
+div[class*="st-key-task_row_"] button[kind="secondary"] p,
+div[class*="st-key-library_card_"] button[kind="secondary"] p {
     position: absolute !important;
     width: 1px !important;
     height: 1px !important;

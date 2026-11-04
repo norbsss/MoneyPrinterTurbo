@@ -811,6 +811,17 @@
     "upload_post.schedule.queue": "Next free slot in my Upload-Post queue",
     "upload_post.schedule.delay": "A set number of hours later",
     "upload_post.schedule.delay_hours": "Hours to wait",
-    "upload_post.schedule.help": "Upload-Post stores scheduled posts and publishes them itself, so this computer can be off by then. Set up queue slots in the Upload-Post dashboard."
+    "upload_post.schedule.help": "Upload-Post stores scheduled posts and publishes them itself, so this computer can be off by then. Set up queue slots in the Upload-Post dashboard.",
+    "library.open": "Library",
+    "library.title": "Video library",
+    "library.empty": "No finished videos yet. Videos you generate appear here.",
+    "library.play": "Play",
+    "library.publish.none": "Not published",
+    "library.publish.pending": "Publishing…",
+    "library.publish.done": "Published",
+    "library.publish.scheduled": "Scheduled for {date}",
+    "library.publish.queued": "Added to the Upload-Post queue",
+    "library.publish.failed": "Publishing failed",
+    "library.show_more": "Show more"
   }
 }

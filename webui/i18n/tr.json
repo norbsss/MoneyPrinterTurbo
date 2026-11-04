@@ -556,6 +556,17 @@
     "upload_post.schedule.queue": "Upload-Post kuyruğumdaki bir sonraki boş zaman",
     "upload_post.schedule.delay": "Belirli bir saat sonra",
     "upload_post.schedule.delay_hours": "Beklenecek saat",
-    "upload_post.schedule.help": "Upload-Post zamanlanmış gönderileri saklar ve kendisi yayınlar; o sırada bu bilgisayar kapalı olabilir. Kuyruk zamanlarını Upload-Post panelinden ayarlayın."
+    "upload_post.schedule.help": "Upload-Post zamanlanmış gönderileri saklar ve kendisi yayınlar; o sırada bu bilgisayar kapalı olabilir. Kuyruk zamanlarını Upload-Post panelinden ayarlayın.",
+    "library.open": "Kitaplık",
+    "library.title": "Video kitaplığı",
+    "library.empty": "Henüz tamamlanmış video yok. Ürettiğiniz videolar burada görünür.",
+    "library.play": "Oynat",
+    "library.publish.none": "Yayınlanmadı",
+    "library.publish.pending": "Yayınlanıyor…",
+    "library.publish.done": "Yayınlandı",
+    "library.publish.scheduled": "{date} için zamanlandı",
+    "library.publish.queued": "Upload-Post kuyruğuna eklendi",
+    "library.publish.failed": "Yayınlanamadı",
+    "library.show_more": "Daha fazla göster"
   }
 }

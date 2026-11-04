@@ -556,6 +556,17 @@
     "upload_post.schedule.queue": "Ближайший свободный слот в моей очереди Upload-Post",
     "upload_post.schedule.delay": "Через заданное число часов",
     "upload_post.schedule.delay_hours": "Часов ожидания",
-    "upload_post.schedule.help": "Upload-Post сохраняет отложенные публикации и публикует их сам, поэтому компьютер к этому времени можно выключить. Слоты очереди настраиваются в панели Upload-Post."
+    "upload_post.schedule.help": "Upload-Post сохраняет отложенные публикации и публикует их сам, поэтому компьютер к этому времени можно выключить. Слоты очереди настраиваются в панели Upload-Post.",
+    "library.open": "Библиотека",
+    "library.title": "Библиотека видео",
+    "library.empty": "Готовых видео пока нет. Созданные видео появятся здесь.",
+    "library.play": "Воспроизвести",
+    "library.publish.none": "Не опубликовано",
+    "library.publish.pending": "Публикуется…",
+    "library.publish.done": "Опубликовано",
+    "library.publish.scheduled": "Запланировано на {date}",
+    "library.publish.queued": "Добавлено в очередь Upload-Post",
+    "library.publish.failed": "Не удалось опубликовать",
+    "library.show_more": "Показать ещё"
   }
 }

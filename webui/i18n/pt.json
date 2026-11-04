@@ -556,6 +556,17 @@
     "upload_post.schedule.queue": "Próximo horário livre na minha fila do Upload-Post",
     "upload_post.schedule.delay": "Depois de um número de horas",
     "upload_post.schedule.delay_hours": "Horas de espera",
-    "upload_post.schedule.help": "O Upload-Post guarda as publicações agendadas e as publica sozinho, então este computador pode estar desligado. Configure os horários da fila no painel do Upload-Post."
+    "upload_post.schedule.help": "O Upload-Post guarda as publicações agendadas e as publica sozinho, então este computador pode estar desligado. Configure os horários da fila no painel do Upload-Post.",
+    "library.open": "Biblioteca",
+    "library.title": "Biblioteca de vídeos",
+    "library.empty": "Ainda não há vídeos prontos. Os vídeos gerados aparecem aqui.",
+    "library.play": "Reproduzir",
+    "library.publish.none": "Não publicado",
+    "library.publish.pending": "Publicando…",
+    "library.publish.done": "Publicado",
+    "library.publish.scheduled": "Agendado para {date}",
+    "library.publish.queued": "Adicionado à fila do Upload-Post",
+    "library.publish.failed": "Falha ao publicar",
+    "library.show_more": "Mostrar mais"
   }
 }

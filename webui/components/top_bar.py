@@ -13,6 +13,7 @@ from webui.common import (
     locales,
     tr,
 )
+from webui.components.library import open_library
 from webui.components.tasks import _render_task_manager_entry
 
 
@@ -109,6 +110,15 @@ def _render_top_bar():
             width="stretch",
         ):
             _render_task_manager_entry()
+
+            st.button(
+                tr("library.open"),
+                key="open_library_dialog_button",
+                type="secondary",
+                icon=":material/video_library:",
+                width="content",
+                on_click=open_library,
+            )
 
             st.button(
                 tr("Settings"),

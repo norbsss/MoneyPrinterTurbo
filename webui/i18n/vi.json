@@ -556,6 +556,17 @@
     "upload_post.schedule.queue": "Khung giờ trống tiếp theo trong hàng đợi Upload-Post của tôi",
     "upload_post.schedule.delay": "Sau một số giờ nhất định",
     "upload_post.schedule.delay_hours": "Số giờ chờ",
-    "upload_post.schedule.help": "Upload-Post lưu bài đăng hẹn giờ và tự đăng, nên lúc đó máy tính này có thể tắt. Thiết lập khung giờ hàng đợi trong bảng điều khiển Upload-Post."
+    "upload_post.schedule.help": "Upload-Post lưu bài đăng hẹn giờ và tự đăng, nên lúc đó máy tính này có thể tắt. Thiết lập khung giờ hàng đợi trong bảng điều khiển Upload-Post.",
+    "library.open": "Thư viện",
+    "library.title": "Thư viện video",
+    "library.empty": "Chưa có video hoàn tất. Video bạn tạo sẽ hiện ở đây.",
+    "library.play": "Phát",
+    "library.publish.none": "Chưa đăng",
+    "library.publish.pending": "Đang đăng…",
+    "library.publish.done": "Đã đăng",
+    "library.publish.scheduled": "Hẹn đăng lúc {date}",
+    "library.publish.queued": "Đã thêm vào hàng đợi Upload-Post",
+    "library.publish.failed": "Đăng thất bại",
+    "library.show_more": "Xem thêm"
   }
 }
