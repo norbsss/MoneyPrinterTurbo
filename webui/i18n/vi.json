@@ -548,6 +548,8 @@
     "local_ai.video.label": "Video AI cục bộ (máy tính này)",
     "local_ai.video.help": "Tạo chuyển động cho từng cảnh bằng card đồ họa của máy tính này: mô hình ảnh cục bộ vẽ cảnh, rồi mô hình video biến nó thành một đoạn ngắn. Miễn phí và riêng tư, nhưng mỗi đoạn mất vài phút. Nếu một đoạn thất bại, cảnh đó dùng ảnh của nó với hiệu ứng phóng chậm.",
     "local_ai.models.image": "Mô hình ảnh",
-    "local_ai.models.video": "Mô hình video"
+    "local_ai.models.video": "Mô hình video",
+    "upload_post.ai_label": "Gắn nhãn bài đăng TikTok và Instagram là do AI tạo",
+    "upload_post.ai_label.help": "Các nền tảng yêu cầu gắn nhãn nội dung AI trông như thật; video YouTube luôn được gắn nhãn. Nhãn trên Instagram không thể gỡ sau khi đăng."
   }
 }

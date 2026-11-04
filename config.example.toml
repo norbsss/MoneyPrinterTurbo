@@ -680,6 +680,9 @@ upload_post_youtube_privacy_status = "public"
 # 未配置时，后续 YouTube 上传默认声明为非面向儿童；儿童内容请显式设置为 true。
 # 与旧版省略声明字段不同，此设置不会修改已上传的视频。
 upload_post_youtube_made_for_kids = false
+# Label TikTok and Instagram posts as AI-generated (Upload-Post is_ai_generated),
+# as YouTube uploads already are. Instagram's label cannot be removed later.
+upload_post_ai_label = true
 # Maximum number of running and queued cross-post jobs per process. When the
 # limit is reached, video generation still succeeds and only cross-posting is
 # rejected.

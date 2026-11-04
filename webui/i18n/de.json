@@ -548,6 +548,8 @@
     "local_ai.video.label": "Lokales KI-Video (dieser Computer)",
     "local_ai.video.help": "Animiert jede Szene auf der Grafikkarte dieses Computers: Das lokale Bildmodell malt die Szene, dann macht das Videomodell daraus einen kurzen Clip. Kostenlos und privat, aber jeder Clip dauert Minuten. Schlägt ein Clip fehl, zeigt diese Szene ihr Bild mit langsamem Zoom.",
     "local_ai.models.image": "Bildmodelle",
-    "local_ai.models.video": "Videomodelle"
+    "local_ai.models.video": "Videomodelle",
+    "upload_post.ai_label": "TikTok- und Instagram-Beiträge als KI-generiert kennzeichnen",
+    "upload_post.ai_label.help": "Die Plattformen verlangen eine Kennzeichnung realistischer KI-Inhalte; YouTube-Uploads werden immer gekennzeichnet. Bei Instagram lässt sich die Kennzeichnung nach dem Veröffentlichen nicht entfernen."
   }
 }

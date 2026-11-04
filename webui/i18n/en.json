@@ -803,6 +803,8 @@
     "local_ai.video.label": "Local AI video (this computer)",
     "local_ai.video.help": "Animates each scene on this computer's GPU: the local image model paints the scene, then the video model turns it into a short clip. Free and private, but each clip takes minutes. If a clip fails, that scene uses its image with a slow zoom.",
     "local_ai.models.image": "Image models",
-    "local_ai.models.video": "Video models"
+    "local_ai.models.video": "Video models",
+    "upload_post.ai_label": "Label TikTok and Instagram posts as AI-generated",
+    "upload_post.ai_label.help": "The platforms require a label on realistic AI-generated content; YouTube uploads are always labeled. Instagram's label cannot be removed after publishing."
   }
 }

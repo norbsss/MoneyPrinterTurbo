@@ -548,6 +548,8 @@
     "local_ai.video.label": "Vídeo com IA local (este computador)",
     "local_ai.video.help": "Anima cada cena com a placa de vídeo deste computador: o modelo de imagem local pinta a cena e o modelo de vídeo a transforma num clipe curto. Grátis e privado, mas cada clipe leva minutos. Se um clipe falhar, a cena usa a imagem com um zoom lento.",
     "local_ai.models.image": "Modelos de imagem",
-    "local_ai.models.video": "Modelos de vídeo"
+    "local_ai.models.video": "Modelos de vídeo",
+    "upload_post.ai_label": "Marcar publicações do TikTok e do Instagram como geradas por IA",
+    "upload_post.ai_label.help": "As plataformas exigem rótulo em conteúdo realista gerado por IA; os envios ao YouTube são sempre rotulados. No Instagram o rótulo não pode ser removido depois de publicar."
   }
 }

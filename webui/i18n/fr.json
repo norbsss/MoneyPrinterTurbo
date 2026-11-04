@@ -548,6 +548,8 @@
     "local_ai.video.label": "Vidéo IA locale (cet ordinateur)",
     "local_ai.video.help": "Anime chaque scène sur la carte graphique de cet ordinateur : le modèle d'image local peint la scène, puis le modèle vidéo en fait un court clip. Gratuit et privé, mais chaque clip prend plusieurs minutes. Si un clip échoue, la scène utilise son image avec un zoom lent.",
     "local_ai.models.image": "Modèles d'image",
-    "local_ai.models.video": "Modèles vidéo"
+    "local_ai.models.video": "Modèles vidéo",
+    "upload_post.ai_label": "Indiquer que les publications TikTok et Instagram sont générées par IA",
+    "upload_post.ai_label.help": "Les plateformes exigent une mention pour les contenus réalistes générés par IA ; les vidéos YouTube sont toujours signalées. Sur Instagram, la mention ne peut plus être retirée après publication."
   }
 }

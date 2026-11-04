@@ -548,6 +548,8 @@
     "local_ai.video.label": "Video AI lokal (komputer ini)",
     "local_ai.video.help": "Menganimasikan setiap adegan dengan kartu grafis komputer ini: model gambar lokal melukis adegan, lalu model video mengubahnya menjadi klip pendek. Gratis dan privat, tetapi setiap klip butuh beberapa menit. Jika satu klip gagal, adegan itu memakai gambarnya dengan zoom perlahan.",
     "local_ai.models.image": "Model gambar",
-    "local_ai.models.video": "Model video"
+    "local_ai.models.video": "Model video",
+    "upload_post.ai_label": "Tandai postingan TikTok dan Instagram sebagai buatan AI",
+    "upload_post.ai_label.help": "Platform mewajibkan label untuk konten AI yang tampak nyata; unggahan YouTube selalu diberi label. Label Instagram tidak bisa dihapus setelah dipublikasikan."
   }
 }

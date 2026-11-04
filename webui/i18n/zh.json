@@ -803,6 +803,8 @@
     "local_ai.video.label": "本机 AI 视频（此电脑）",
     "local_ai.video.help": "使用本机显卡为每个画面生成动画：先由本机生图模型画出画面，再由视频模型做成短片段。免费且私密，但每个片段需要数分钟。某个片段失败时，该画面改用图片加缓慢缩放。",
     "local_ai.models.image": "生图模型",
-    "local_ai.models.video": "视频模型"
+    "local_ai.models.video": "视频模型",
+    "upload_post.ai_label": "将 TikTok 与 Instagram 帖子标注为 AI 生成",
+    "upload_post.ai_label.help": "平台要求对逼真的 AI 生成内容进行标注；YouTube 上传始终带有标注。Instagram 的标注发布后无法移除。"
   }
 }

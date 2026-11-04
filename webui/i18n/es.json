@@ -548,6 +548,8 @@
     "local_ai.video.label": "Vídeo con IA local (este ordenador)",
     "local_ai.video.help": "Anima cada escena con la tarjeta gráfica de este ordenador: el modelo de imagen local pinta la escena y el modelo de vídeo la convierte en un clip corto. Gratis y privado, pero cada clip tarda minutos. Si un clip falla, esa escena usa su imagen con un zoom lento.",
     "local_ai.models.image": "Modelos de imagen",
-    "local_ai.models.video": "Modelos de vídeo"
+    "local_ai.models.video": "Modelos de vídeo",
+    "upload_post.ai_label": "Marcar las publicaciones de TikTok e Instagram como generadas con IA",
+    "upload_post.ai_label.help": "Las plataformas exigen etiquetar el contenido realista generado con IA; los vídeos de YouTube siempre se etiquetan. En Instagram la etiqueta no se puede quitar después de publicar."
   }
 }

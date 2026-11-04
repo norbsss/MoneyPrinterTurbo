@@ -18,6 +18,10 @@ from app.config import config
 _UPLOAD_STATUS_POLL_INTERVAL_SECONDS = 10
 _UPLOAD_STATUS_TIMEOUT_SECONDS = 3600
 _MAX_CONSECUTIVE_STATUS_ERRORS = 3
+# Upload-Post 按平台读取的发布文案字段；缺失时回退到通用 title。
+# https://docs.upload-post.com/api/upload-video
+_PLATFORM_TITLE_FIELDS = {"tiktok": "tiktok_title", "instagram": "instagram_title"}
+_PLATFORM_TEXT_LIMIT = 2200
 
 
 class UploadPostService:
@@ -163,6 +167,12 @@ class UploadPostService:
         return config.app.get("upload_post_youtube_privacy_status", "public")
 
     @property
+    def ai_label(self) -> bool:
+        # TikTok 与 Instagram 要求标注 AI 生成内容，与 YouTube 的
+        # containsSyntheticMedia 一致默认开启。Instagram 的标注发布后无法撤销。
+        return config.app.get("upload_post_ai_label", True) is True
+
+    @property
     def youtube_made_for_kids(self) -> bool:
         # 未配置时，后续 YouTube 上传显式声明为非面向儿童；儿童内容需设置为 true。
         # 这与旧版省略声明字段不同，但不会修改已上传的视频。
@@ -180,6 +190,7 @@ class UploadPostService:
         privacy_level: str = "PUBLIC_TO_EVERYONE",
         youtube_extra: Optional[dict] = None,
         on_background_start: Callable[[str], None] | None = None,
+        platform_titles: Optional[dict] = None,
     ) -> dict:
         if not self.is_configured():
             logger.warning("Upload-Post is not configured. Skipping cross-post.")
@@ -231,6 +242,15 @@ class UploadPostService:
 
                 for platform in platforms:
                     data.append(('platform[]', platform))
+
+                # 每个平台各自的文案（含话题标签），未提供时 Upload-Post 使用 title。
+                for platform, text in (platform_titles or {}).items():
+                    field = _PLATFORM_TITLE_FIELDS.get(platform)
+                    if field and platform in platforms and str(text or "").strip():
+                        data.append((field, str(text)[:_PLATFORM_TEXT_LIMIT]))
+
+                if self.ai_label and any(p in _PLATFORM_TITLE_FIELDS for p in platforms):
+                    data.append(('is_ai_generated', "true"))
 
                 if has_youtube:
                     # multipart 表单使用小写布尔字符串，且不能依赖 LLM 元数据
@@ -400,6 +420,7 @@ def cross_post_video(
     youtube_extra: Optional[dict] = None,
     on_background_start: Callable[[str], None] | None = None,
     account: dict | None = None,
+    platform_titles: Optional[dict] = None,
 ) -> dict:
     service = UploadPostService(account) if account is not None else upload_post_service
     return service.upload_video(
@@ -408,4 +429,5 @@ def cross_post_video(
         platforms,
         youtube_extra=youtube_extra,
         on_background_start=on_background_start,
+        platform_titles=platform_titles,
     )

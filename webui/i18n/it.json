@@ -548,6 +548,8 @@
     "local_ai.video.label": "Video IA locale (questo computer)",
     "local_ai.video.help": "Anima ogni scena con la scheda grafica di questo computer: il modello di immagini locale dipinge la scena, poi il modello video la trasforma in una breve clip. Gratuito e privato, ma ogni clip richiede minuti. Se una clip non riesce, la scena usa la sua immagine con uno zoom lento.",
     "local_ai.models.image": "Modelli di immagini",
-    "local_ai.models.video": "Modelli video"
+    "local_ai.models.video": "Modelli video",
+    "upload_post.ai_label": "Contrassegna i post di TikTok e Instagram come generati con l'IA",
+    "upload_post.ai_label.help": "Le piattaforme richiedono un'etichetta per i contenuti realistici generati con l'IA; i video su YouTube sono sempre etichettati. Su Instagram l'etichetta non si può rimuovere dopo la pubblicazione."
   }
 }

@@ -1411,6 +1411,20 @@ def _render_settings_dialog():
                         "app", "upload_post_platforms", upload_post_platforms
                     )
 
+                if {"tiktok", "instagram"} & set(upload_post_platforms):
+                    # 与 YouTube 的 containsSyntheticMedia 一致默认开启；Instagram
+                    # 的标注发布后无法撤销，因此在这里明确提示。
+                    upload_post_ai_label = st.checkbox(
+                        tr("upload_post.ai_label"),
+                        value=app_settings.get("upload_post_ai_label", True) is True,
+                        help=tr("upload_post.ai_label.help"),
+                        key="upload_post_ai_label_checkbox",
+                    )
+                    if upload_post_ai_label != (
+                        app_settings.get("upload_post_ai_label", True) is True
+                    ):
+                        _set_runtime_config("app", "upload_post_ai_label", upload_post_ai_label)
+
                 if "youtube" in upload_post_platforms:
                     yt_status_options = ["public", "private", "unlisted"]
                     yt_saved = app_settings.get(

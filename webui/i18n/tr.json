@@ -548,6 +548,8 @@
     "local_ai.video.label": "Yerel yapay zekâ videosu (bu bilgisayar)",
     "local_ai.video.help": "Her sahneyi bu bilgisayarın ekran kartında canlandırır: yerel görsel modeli sahneyi çizer, ardından video modeli onu kısa bir klibe dönüştürür. Ücretsiz ve gizli, ancak her klip dakikalar sürer. Bir klip başarısız olursa o sahne kendi görselini yavaş yakınlaştırmayla kullanır.",
     "local_ai.models.image": "Görsel modelleri",
-    "local_ai.models.video": "Video modelleri"
+    "local_ai.models.video": "Video modelleri",
+    "upload_post.ai_label": "TikTok ve Instagram gönderilerini yapay zekâ ile üretilmiş olarak işaretle",
+    "upload_post.ai_label.help": "Platformlar gerçekçi yapay zekâ içeriklerinin etiketlenmesini ister; YouTube yüklemeleri her zaman etiketlenir. Instagram'da etiket yayınlandıktan sonra kaldırılamaz."
   }
 }

@@ -548,6 +548,8 @@
     "local_ai.video.label": "Lokal Sİ videosu (bu kompüter)",
     "local_ai.video.help": "Hər səhnəni bu kompüterin videokartında canlandırır: lokal şəkil modeli səhnəni çəkir, sonra video modeli onu qısa klipə çevirir. Pulsuz və məxfi, amma hər klip dəqiqələr çəkir. Klip alınmasa, həmin səhnə öz şəklini yavaş yaxınlaşdırma ilə istifadə edir.",
     "local_ai.models.image": "Şəkil modelləri",
-    "local_ai.models.video": "Video modelləri"
+    "local_ai.models.video": "Video modelləri",
+    "upload_post.ai_label": "TikTok və Instagram paylaşımlarını Sİ ilə yaradılmış kimi işarələ",
+    "upload_post.ai_label.help": "Platformalar real görünən Sİ məzmununun işarələnməsini tələb edir; YouTube yükləmələri həmişə işarələnir. Instagram-da işarə dərc edildikdən sonra silinə bilməz."
   }
 }
