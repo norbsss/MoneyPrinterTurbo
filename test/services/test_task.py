@@ -2074,8 +2074,8 @@ class TestTaskService(unittest.TestCase):
 
     def test_cross_post_generates_caption_for_non_youtube_platforms(self):
         """
-        TikTok/Instagram 发布同样要生成一次社交文案，并把 caption 作为所有
-        成片共享的发布标题，而不是直接发送原始主题。
+        TikTok/Instagram 发布要为每个平台各生成一次社交文案，并把第一个平台的
+        caption 作为所有成片共享的通用标题，而不是直接发送原始主题。
         """
         metadata = {
             "title": "Coffee Hook",
@@ -2084,11 +2084,11 @@ class TestTaskService(unittest.TestCase):
         }
         state = MemoryState()
         cases = {
-            "tiktok-first": (("tiktok", "instagram"), "tiktok"),
-            "instagram-first": (("instagram", "tiktok"), "instagram_reels"),
+            "tiktok-first": (("tiktok", "instagram"), ("tiktok", "instagram_reels")),
+            "instagram-first": (("instagram", "tiktok"), ("instagram_reels", "tiktok")),
         }
 
-        for case_name, (platforms, expected_platform) in cases.items():
+        for case_name, (platforms, expected_platforms) in cases.items():
             with self.subTest(case=case_name):
                 task_id = f"caption-{case_name}"
                 state.update_task(
@@ -2121,15 +2121,29 @@ class TestTaskService(unittest.TestCase):
                         "private",
                     )
 
-                generate_metadata.assert_called_once_with(
-                    video_subject="Coffee",
-                    video_script="A short coffee story.",
-                    language="en",
-                    platform=expected_platform,
+                # 每个平台各生成一次文案；通用 title 仍取第一个平台的文案。
+                self.assertEqual(
+                    [call.kwargs for call in generate_metadata.call_args_list],
+                    [
+                        {
+                            "video_subject": "Coffee",
+                            "video_script": "A short coffee story.",
+                            "language": "en",
+                            "platform": social_platform,
+                        }
+                        for social_platform in expected_platforms
+                    ],
                 )
                 cross_post.assert_called_once()
                 call = cross_post.call_args
                 self.assertEqual(call.kwargs["title"], "Watch this coffee ritual.")
+                self.assertEqual(
+                    call.kwargs["platform_titles"],
+                    {
+                        platform: "Watch this coffee ritual.\n\n#coffee"
+                        for platform in platforms
+                    },
+                )
                 self.assertEqual(call.kwargs["platforms"], list(platforms))
                 self.assertIsNone(call.kwargs["youtube_extra"])
                 task = state.get_task(task_id)
