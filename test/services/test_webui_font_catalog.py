@@ -9,6 +9,7 @@ from PIL import ImageFont
 import pytest
 
 from app.utils.file_security import resolve_path_within_directory
+from test.services.webui_source import webui_source
 
 ROOT = Path(__file__).parents[2]
 
@@ -17,7 +18,7 @@ def _catalog(font_dir):
     # Follow the existing headless WebUI tests: execute the actual helper body
     # without running the full page or retaining the 30-second UI cache.
     source = ROOT / "webui" / "Main.py"
-    tree = ast.parse(source.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     function = next(
         node for node in tree.body
         if isinstance(node, ast.FunctionDef) and node.name == "get_all_fonts"

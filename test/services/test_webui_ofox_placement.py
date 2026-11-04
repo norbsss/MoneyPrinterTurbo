@@ -9,6 +9,7 @@ import pytest
 from streamlit.testing.v1 import AppTest
 
 from app.config import config
+from test.services.webui_source import webui_source
 
 
 WEBUI = Path(__file__).resolve().parents[2] / "webui" / "Main.py"
@@ -16,7 +17,7 @@ WEBUI = Path(__file__).resolve().parents[2] / "webui" / "Main.py"
 
 def test_ai_video_source_order_keeps_ofox_below_metaso():
     # 常量控制视频来源选择器，设置弹窗则通过下面的真实控件测试验证。
-    tree = ast.parse(WEBUI.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     assignment = next(
         node for node in tree.body
         if isinstance(node, ast.Assign)

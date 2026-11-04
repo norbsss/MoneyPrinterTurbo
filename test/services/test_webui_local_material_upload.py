@@ -12,6 +12,7 @@ from PIL import Image
 from app.models.schema import MaterialInfo, VideoParams
 from app.services import material_upload as material_upload_service
 from app.utils import utils
+from test.services.webui_source import webui_source
 
 
 WEBUI_MAIN = Path(__file__).parents[2] / "webui" / "Main.py"
@@ -47,7 +48,7 @@ def _image_bytes() -> bytes:
 
 def _run_webui_upload_block(files, temp_dir):
     """Execute the actual generation handler's local-material branch headlessly."""
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     generation = next(
         node for node in tree.body
         if isinstance(node, ast.FunctionDef)

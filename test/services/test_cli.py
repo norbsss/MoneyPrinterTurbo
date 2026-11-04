@@ -18,6 +18,7 @@ from app.config import config as app_config
 from app.models import schema as app_schema
 from app.models.schema import VideoTransitionMode
 from app.utils.logging_utils import force_utf8_console
+from test.services.webui_source import webui_source
 
 
 class TestCli(unittest.TestCase):
@@ -2167,9 +2168,7 @@ class TestCliUiDefaults(unittest.TestCase):
         两个入口共享同一份 config.toml，因此 CLI 必须接受 WebUI 能保存的每一个
         字幕位置，否则保存值会在命令行入口被静默换成 bottom。
         """
-        source = (Path(__file__).parent.parent.parent / "webui" / "Main.py").read_text(
-            encoding="utf-8"
-        )
+        source = webui_source()
         webui_positions = set()
         for node in ast.walk(ast.parse(source)):
             if not isinstance(node, ast.Assign) or not any(
@@ -2218,9 +2217,7 @@ class TestCliUiDefaults(unittest.TestCase):
         ):
             self.assertEqual(sorted(cli_values), sorted(model_values))
 
-        source = (Path(__file__).parent.parent.parent / "webui" / "Main.py").read_text(
-            encoding="utf-8"
-        )
+        source = webui_source()
         for name, cli_values in (
             ("subtitle_display_modes", cli._SUBTITLE_DISPLAY_MODE_VALUES),
             ("subtitle_animations", cli._SUBTITLE_ANIMATION_VALUES),

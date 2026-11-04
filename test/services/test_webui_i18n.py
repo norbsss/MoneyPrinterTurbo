@@ -6,6 +6,7 @@ from pathlib import Path
 
 from app.models.llm_provider import get_llm_provider
 from app.utils import utils
+from test.services.webui_source import webui_source
 
 
 ROOT_DIR = Path(__file__).parent.parent.parent
@@ -251,7 +252,7 @@ def _load_translation(locale):
 
 
 def _support_locales():
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     for node in tree.body:
         if not isinstance(node, ast.Assign):
             continue
@@ -351,7 +352,7 @@ class TestWebuiI18n(unittest.TestCase):
         self.assertEqual(language, "en")
 
     def test_english_locale_covers_static_webui_labels(self):
-        tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+        tree = ast.parse(webui_source())
         visitor = _TrKeyVisitor()
         visitor.visit(tree)
 
@@ -413,7 +414,7 @@ class TestWebuiI18n(unittest.TestCase):
                 self.assertEqual(sorted(ENGLISH_FALLBACK_KEYS & locale_keys), [])
 
     def test_secondary_locales_cover_static_webui_labels(self):
-        tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+        tree = ast.parse(webui_source())
         visitor = _TrKeyVisitor()
         visitor.visit(tree)
 

@@ -8,11 +8,12 @@ from unittest.mock import MagicMock
 import pytest
 
 from app.services import material_upload
+from test.services.webui_source import webui_source
 
 
 def _picker_types():
     source = Path(__file__).parents[2] / "webui" / "Main.py"
-    tree = ast.parse(source.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     names = {"LOCAL_MATERIAL_EXTENSIONS", "local_file_types"}
     assignments = [
         node for node in ast.walk(tree)

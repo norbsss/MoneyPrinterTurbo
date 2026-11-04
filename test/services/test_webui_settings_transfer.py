@@ -7,6 +7,7 @@ import pytest
 from app.models.llm_provider import LLM_PROVIDER_REGISTRY, get_llm_provider
 from app.models.schema import VideoParams
 from app.services import bgm as bgm_service
+from test.services.webui_source import webui_source
 
 
 ROOT_DIR = Path(__file__).parent.parent.parent
@@ -63,7 +64,7 @@ def _load_settings_transfer_helpers():
     与任务历史测试相同，直接导入 Main.py 会执行整套页面渲染。这里只编译目标
     常量和函数，既验证真实实现，也不需要为测试拆出额外的生产模块。
     """
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     selected_nodes = []
     for node in tree.body:
         if isinstance(node, ast.Assign) and any(

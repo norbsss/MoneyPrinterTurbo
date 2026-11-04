@@ -14,6 +14,7 @@ from streamlit.testing.v1 import AppTest
 
 from app.config import config
 from app.services import llm, loomloom
+from test.services.webui_source import webui_source
 
 MAIN = Path(__file__).parents[2] / "webui" / "Main.py"
 
@@ -25,7 +26,7 @@ def helpers(state):
         "_load_loomloom_video_capability",
         "_matching_full_voice_preview_duration",
     }
-    tree = ast.parse(MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     module = ast.fix_missing_locations(
         ast.Module(
             body=[

@@ -334,7 +334,8 @@ _current_generation_task_id = lambda: "recovering"
 _normalize_task_state = lambda value: value
 _remove_active_generation_task = lambda _id: None
 _render_generation_task_snapshot = lambda *_args: st.info("running")
-nodes = [n for n in ast.parse(Path({str(entry)!r}).read_text()).body
+from test.services.webui_source import webui_source
+nodes = [n for n in ast.parse(webui_source()).body
     if isinstance(n, ast.FunctionDef) and n.name in {{"_render_current_generation_task", "_render_running_generation_task"}}]
 exec(compile(ast.fix_missing_locations(ast.Module(body=nodes, type_ignores=[])), {str(entry)!r}, "exec"))
 _render_current_generation_task()

@@ -10,6 +10,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from app.models import const
+from test.services.webui_source import webui_source
 
 
 ROOT_DIR = Path(__file__).parent.parent.parent
@@ -37,7 +38,7 @@ def _load_task_history_helpers():
     直接导入 Main.py 会执行整套页面渲染。测试只编译目标常量和函数，既验证
     合并后的真实实现，也避免为了单元测试重新拆出一个只有少量函数的生产模块。
     """
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     selected_nodes = []
     for node in tree.body:
         if isinstance(node, ast.Assign) and any(
@@ -238,7 +239,7 @@ def test_history_scan_skips_non_object_script_payload(tmp_path, payload):
     task_dir.mkdir(parents=True)
     (task_dir / "script.json").write_text(json.dumps(payload), encoding="utf-8")
 
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     selected = [
         node
         for node in tree.body

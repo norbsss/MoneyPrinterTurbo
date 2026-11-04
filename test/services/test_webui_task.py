@@ -16,6 +16,7 @@ from app.models import const
 from app.models.schema import VideoParams
 from app.services import webui_task
 from app.utils import logging_utils
+from test.services.webui_source import webui_source
 
 
 ROOT_DIR = Path(__file__).parent.parent.parent
@@ -48,7 +49,7 @@ def test_generation_controls_submit_background_task_instead_of_blocking_page():
     这是 Issue #1120 白屏的核心回归保护：只要完整页面脚本再次阻塞在
     ``tm.start``，用户在生成期间刷新时仍可能收到指向旧渲染树的 delta。
     """
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     function = next(
         node
         for node in tree.body
@@ -72,7 +73,7 @@ def test_webui_runtime_config_updates_do_not_use_blocking_writes():
     所有 WebUI 配置写入都必须经过非阻塞 helper；LLM 连接测试和语音试听可
     使用 try lock 快速返回，但页面代码不能直接调用阻塞锁或阻塞保存函数。
     """
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     calls = {
         _attribute_name(node.func)
         for node in ast.walk(tree)
@@ -142,7 +143,7 @@ def test_webui_runtime_config_updates_do_not_use_blocking_writes():
 
 def test_webui_delete_keeps_task_state_when_file_removal_fails(tmp_path):
     """A failed directory removal must leave the task available for retry."""
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     function = next(
         node
         for node in tree.body
@@ -179,7 +180,7 @@ def test_webui_delete_keeps_task_state_when_file_removal_fails(tmp_path):
 
 def test_active_task_uses_terminal_state_when_outside_runtime_page(tmp_path):
     """An active session marker must not hide a finished task past page one."""
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     function = next(
         node
         for node in tree.body
@@ -234,7 +235,7 @@ def test_active_task_uses_terminal_state_when_outside_runtime_page(tmp_path):
 
 def test_task_summary_tolerates_directory_removed_during_scan():
     """A concurrent deletion between isdir and stat must not crash the panel."""
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     function = next(
         node
         for node in tree.body
@@ -293,7 +294,7 @@ def test_terminal_task_renders_subject_named_video_download(
     tmp_path, ui_config, expected_open_count, task_state, has_video
 ):
     """完成任务应提供成片下载，并按 WebUI 配置决定是否自动打开目录。"""
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     selected_nodes = []
     target_names = {
         "_DOWNLOAD_FILENAME_INVALID_PATTERN",
@@ -741,7 +742,7 @@ def test_generation_log_fragment_refreshes_within_half_a_second():
     """日志轮询间隔不能退回到明显落后于终端输出的秒级刷新。"""
     assert webui_task.TASK_LOG_REFRESH_INTERVAL_SECONDS <= 0.5
 
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     function = next(
         node
         for node in tree.body
@@ -765,7 +766,7 @@ def test_generation_submit_skips_duplicate_config_save():
     非阻塞保存，页面末尾无需重复请求；普通交互则继续通过同一个非阻塞 helper
     保存，不能重新退回 config.save_config。
     """
-    tree = ast.parse(WEBUI_MAIN.read_text(encoding="utf-8"))
+    tree = ast.parse(webui_source())
     controls = next(
         node
         for node in tree.body
